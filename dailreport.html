@@ -13,8 +13,11 @@
         .btn-primary:hover { background-color: #2563eb; transform: translateY(-1px); }
         .btn-copy { background-color: #10b981; }
         .btn-copy:hover { background-color: #059669; }
-        select {background-color: #0f172a !important; color: #f8fafc !important; border: 1px solid #475569 !important;}
-        select option { background-color: #0f172a; color: #f8fafc;}
+        .btn-discord { background-color: #5865F2; transition: all 0.3s; }
+        .btn-discord:hover { background-color: #4752c4; transform: translateY(-1px); }
+        select { background-color: #0f172a !important; color: #f8fafc !important; border: 1px solid #475569 !important; }
+        select option { background-color: #0f172a; color: #f8fafc; }
+        ::-webkit-calendar-picker-indicator { filter: invert(1); }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -22,39 +25,40 @@
         <header class="mb-8 flex justify-between items-end">
             <div>
                 <h1 class="text-3xl font-bold text-blue-400 tracking-tight">KIRAMITSU</h1>
-                <p class="text-slate-400">Sales Dashboard & Calculator</p>
-                <p class="text-blue-400"><a href="index.html">Kembali </a><span> ← </span></p>
-                
+                <p class="text-slate-400 text-sm">Sales Dashboard & Calculator</p>
+                <p class="text-blue-400 text-xs mt-1"><a href="index.html" class="hover:underline">← Kembali ke Menu Utama</a></p>
             </div>
             <div class="text-right">
-                <p id="headerNameDisplay" class="font-semibold text-slate-200">Pengurus Kiramitsu</p>
-                <p class="text-xs text-slate-500 uppercase">HRD,Manajer,Ceo Division</p>
+                <p id="headerNameDisplay" class="font-semibold text-slate-200 uppercase tracking-tighter">Pengurus Kiramitsu</p>
+                <p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest">HRD • Manajer • CEO</p>
             </div>
         </header>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- INPUT SECTION -->
-            <div class="card p-6">
-                <h2 class="text-xl font-semibold mb-4 border-b border-slate-700 pb-2">Input Penjualan Harian</h2>
+            <div class="card p-6 shadow-xl">
+                <h2 class="text-xl font-semibold mb-4 border-b border-slate-700 pb-2 flex items-center gap-2">
+                    <span>✍️</span> Input Penjualan
+                </h2>
                 <div class="space-y-4">
                     <!-- Kasir & Waktu -->
                     <div class="space-y-3">
                         <div>
-                            <label class="block text-sm text-slate-400 mb-1">Nama Kasir</label>
-                            <select id="kasirInput" class="w-full p-2 rounded text-sm">
+                            <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1 ml-1">Nama Kasir</label>
+                            <select id="kasirInput" class="w-full p-2 rounded text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="Nuel Zaverio" selected>Nuel Zaverio</option>
                                 <option value="Gison Kiramitsu">Gison Kiramitsu</option>
                                 <option value="Valish Kiramitsu">Valish Kiramitsu</option>
-                                <option value="Nuel Zaverio" selected>Nuel Zaverio</option>
                             </select>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm text-slate-400 mb-1">Tanggal</label>
-                                <input type="date" id="dateInput" class="w-full p-2 rounded text-sm">
+                                <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1 ml-1">Tanggal</label>
+                                <input type="date" id="dateInput" class="w-full p-2 rounded text-sm outline-none focus:ring-2 focus:ring-blue-500">
                             </div>
                             <div>
-                                <label class="block text-sm text-slate-400 mb-1">Jam Closing</label>
-                                <input type="text" id="timeInput" placeholder="Contoh: 05:00 WIB" class="w-full p-2 rounded text-sm">
+                                <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1 ml-1">Jam Closing</label>
+                                <input type="text" id="timeInput" placeholder="05:00 WIB" class="w-full p-2 rounded text-sm outline-none focus:ring-2 focus:ring-blue-500">
                             </div>
                         </div>
                     </div>
@@ -62,72 +66,81 @@
                     <!-- Produk -->
                     <div class="grid grid-cols-2 gap-4 border-t border-slate-700 pt-4">
                         <div>
-                            <label class="block text-sm text-slate-400 mb-1">P. Amer (65k)</label>
-                            <input type="number" id="qAmer" value="0" min="0" class="w-full p-2 rounded sales-qty">
+                            <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1 ml-1">P. Amer (65k)</label>
+                            <input type="number" id="qAmer" value="0" min="0" class="w-full p-2 rounded sales-qty outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
                         <div>
-                            <label class="block text-sm text-slate-400 mb-1">P. Vodka (85k)</label>
-                            <input type="number" id="qVodka" value="0" min="0" class="w-full p-2 rounded sales-qty">
+                            <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1 ml-1">P. Vodka (85k)</label>
+                            <input type="number" id="qVodka" value="0" min="0" class="w-full p-2 rounded sales-qty outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
                         <div>
-                            <label class="block text-sm text-slate-400 mb-1">P. Azul (105k)</label>
-                            <input type="number" id="qAzul" value="0" min="0" class="w-full p-2 rounded sales-qty">
+                            <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1 ml-1">P. Azul (105k)</label>
+                            <input type="number" id="qAzul" value="0" min="0" class="w-full p-2 rounded sales-qty outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
                         <div>
-                            <label class="block text-sm text-slate-400 mb-1">Rokok & Korek (50k)</label>
-                            <input type="number" id="qRokok" value="0" min="0" class="w-full p-2 rounded sales-qty">
+                            <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1 ml-1">Rokok & Korek (50k)</label>
+                            <input type="number" id="qRokok" value="0" min="0" class="w-full p-2 rounded sales-qty outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm text-slate-400 mb-1">French Fries (60k)</label>
-                            <input type="number" id="qFries" value="0" min="0" class="w-full p-2 rounded sales-qty">
+                            <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1 ml-1">French Fries (60k)</label>
+                            <input type="number" id="qFries" value="0" min="0" class="w-full p-2 rounded sales-qty outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
                         <div>
-                            <label class="block text-sm text-slate-400 mb-1">Fish & Chips (70k)</label>
-                            <input type="number" id="qChips" value="0" min="0" class="w-full p-2 rounded sales-qty">
+                            <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1 ml-1">Fish & Chips (70k)</label>
+                            <input type="number" id="qChips" value="0" min="0" class="w-full p-2 rounded sales-qty outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4 border-t border-slate-700 pt-4">
                         <div>
-                            <label class="block text-sm text-slate-400 mb-1">VIP Basic (1.5jt)</label>
-                            <input type="number" id="qVipBasic" value="0" min="0" class="w-full p-2 rounded sales-qty">
+                            <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1 ml-1">VIP Basic (1.5jt)</label>
+                            <input type="number" id="qVipBasic" value="0" min="0" class="w-full p-2 rounded sales-qty outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
                         <div>
-                            <label class="block text-sm text-slate-400 mb-1">VIP Tema (2.5jt)</label>
-                            <input type="number" id="qVipTema" value="0" min="0" class="w-full p-2 rounded sales-qty">
+                            <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1 ml-1">VIP Tema (2.5jt)</label>
+                            <input type="number" id="qVipTema" value="0" min="0" class="w-full p-2 rounded sales-qty outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- RESULT SECTION -->
-            <div class="card p-6 flex flex-col">
-                <h2 class="text-xl font-semibold mb-4 border-b border-slate-700 pb-2">Ringkasan Laporan</h2>
+            <div class="card p-6 flex flex-col shadow-2xl border-t-4 border-t-blue-500">
+                <h2 class="text-xl font-semibold mb-4 border-b border-slate-700 pb-2 flex justify-between items-center">
+                    <span>📄 Preview Laporan</span>
+                    <button onclick="copyToClipboard()" class="text-[10px] bg-slate-700 px-3 py-1 rounded uppercase font-bold hover:bg-slate-600">Salin Teks</button>
+                </h2>
                 <div id="outputContainer" class="flex-grow">
-                    <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-xs font-mono mb-4 whitespace-pre" id="reportText">
+                    <div class="bg-black/40 p-4 rounded-lg border border-slate-800 text-[11px] font-mono mb-4 whitespace-pre leading-relaxed min-h-[400px]" id="reportText">
 Silakan masukkan data...
                     </div>
                 </div>
-                <div class="mt-auto space-y-2">
-                    <div class="text-lg font-bold text-green-400 flex justify-between px-2">
-                        <span>ESTIMASI TOTAL:</span>
+                <div class="mt-auto space-y-3">
+                    <div class="text-lg font-bold text-blue-400 flex justify-between px-2 bg-blue-400/10 p-2 rounded-lg border border-blue-400/20">
+                        <span class="text-xs uppercase self-center text-slate-400">Total Revenue:</span>
                         <span id="grandTotalLabel">Rp 0</span>
                     </div>
-                    <button onclick="copyToClipboard()" class="btn-primary btn-copy w-full py-3 rounded-lg font-bold uppercase tracking-wider">Salin Daily Report</button>
-                    <button onclick="resetForm()" class="w-full py-2 text-slate-500 text-sm hover:text-slate-300">Reset Form</button>
+                    
+                    <button id="btnSendDiscord" onclick="sendToDiscord()" class="btn-discord w-full py-4 rounded-xl font-black uppercase tracking-[0.2em] shadow-lg flex items-center justify-center gap-2">
+                        <span>🚀</span> KIRIM KE DISCORD
+                    </button>
+                    
+                    <button onclick="resetForm()" class="w-full py-1 text-slate-600 text-[10px] uppercase font-bold tracking-widest hover:text-slate-400 transition-colors">Reset Formulir</button>
                 </div>
             </div>
         </div>
         
-        <footer class="mt-8 text-center text-slate-500 text-xs">
-            Kiramitsu Management System &bull; Version 1.2 &bull; Update: Flexible Cashier Name
+        <footer class="mt-8 text-center text-slate-600 text-[10px] uppercase tracking-[0.3em] font-bold">
+            Kiramitsu Management System • v1.4 • Cloud Integrated
         </footer>
     </div>
 
     <script>
+        const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1486784424061173760/Dkk2_hOwkyoMp9iyPaKBMJbie8T9HfyYe1mhPp_JXXe6JgTp0bQTYO5ZOO9v38dOf2Ay";
+
         const PRICES = {
             amer: 65000,
             vodka: 85000,
@@ -140,7 +153,11 @@ Silakan masukkan data...
         };
 
         function formatIDR(num) {
-            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(num);
+            return new Intl.NumberFormat('id-ID', { 
+                style: 'currency', 
+                currency: 'IDR', 
+                maximumFractionDigits: 0 
+            }).format(num);
         }
 
         function generateReport() {
@@ -148,9 +165,6 @@ Silakan masukkan data...
             const dateVal = document.getElementById('dateInput').value || '---';
             const timeVal = document.getElementById('timeInput').value || '--:-- WIB';
             
-            // Update UI Header
-            document.getElementById('headerNameDisplay').innerText = "Pengurus Kiramitsu";
-
             const qA = parseInt(document.getElementById('qAmer').value) || 0;
             const qV = parseInt(document.getElementById('qVodka').value) || 0;
             const qAz = parseInt(document.getElementById('qAzul').value) || 0;
@@ -194,6 +208,40 @@ Silakan masukkan data...
             document.getElementById('reportText').innerText = report;
         }
 
+        async function sendToDiscord() {
+            const reportText = document.getElementById('reportText').innerText;
+            const btn = document.getElementById('btnSendDiscord');
+            
+            if (reportText.includes("Silakan masukkan data")) return;
+
+            try {
+                btn.disabled = true;
+                btn.innerText = "SEDANG MENGIRIM...";
+
+                const response = await fetch(DISCORD_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: "```" + reportText.replace(/```/g, "") + "```" })
+                });
+
+                if (response.ok) {
+                    btn.innerText = "✅ BERHASIL TERKIRIM!";
+                    btn.style.backgroundColor = "#16a34a";
+                    setTimeout(() => {
+                        btn.innerText = "🚀 KIRIM KE DISCORD";
+                        btn.style.backgroundColor = "";
+                        btn.disabled = false;
+                    }, 3000);
+                } else {
+                    throw new Error("Gagal kirim");
+                }
+            } catch (error) {
+                alert("Kesalahan: Webhook Discord bermasalah atau tidak ada koneksi.");
+                btn.disabled = false;
+                btn.innerText = "🚀 KIRIM KE DISCORD";
+            }
+        }
+
         function copyToClipboard() {
             const text = document.getElementById('reportText').innerText;
             const el = document.createElement('textarea');
@@ -202,22 +250,19 @@ Silakan masukkan data...
             el.select();
             document.execCommand('copy');
             document.body.removeChild(el);
-            
-            const btn = document.querySelector('.btn-copy');
-            const originalText = btn.innerText;
-            btn.innerText = "BERHASIL DISALIN!";
-            setTimeout(() => { btn.innerText = originalText; }, 2000);
+            alert("Laporan berhasil disalin!");
         }
 
         function resetForm() {
-            document.querySelectorAll('.sales-qty').forEach(el => el.value = 0);
-            document.getElementById('timeInput').value = "";
-            generateReport();
+            if(confirm("Reset semua angka?")) {
+                document.querySelectorAll('.sales-qty').forEach(el => el.value = 0);
+                document.getElementById('timeInput').value = "";
+                generateReport();
+            }
         }
 
         document.querySelectorAll('input, select').forEach(el => {
             el.addEventListener('input', generateReport);
-            el.addEventListener('change', generateReport);
         });
 
         window.onload = () => {
