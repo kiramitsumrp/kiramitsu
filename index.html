@@ -5,83 +5,173 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kiramitsu Management System</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #0f172a; color: #f8fafc; font-family: 'Inter', sans-serif; }
-        .nav-card { 
-            background-color: #1e293b; 
-            border: 1px solid #334155; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        body { 
+            background: radial-gradient(circle at top right, #2d1b2e, #0f172a); 
+            color: #f8fafc; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            overflow-x: hidden;
         }
-        .nav-card:hover { 
-            border-color: #3b82f6; 
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.2);
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(244, 114, 182, 0.1);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
         }
-        .icon-box {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+
+        .glass-card:hover {
+            background: rgba(244, 114, 182, 0.05);
+            border-color: rgba(244, 114, 182, 0.4);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px -15px rgba(244, 114, 182, 0.2);
+        }
+
+        .logo-glow {
+            text-shadow: 0 0 25px rgba(244, 114, 182, 0.6), 0 0 50px rgba(244, 114, 182, 0.2);
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            opacity: 0.4;
+            background: 
+                radial-gradient(circle at 20% 30%, #db2777 0%, transparent 25%),
+                radial-gradient(circle at 80% 70%, #9d174d 0%, transparent 25%);
+            filter: blur(80px);
+        }
+
+        .nav-icon {
+            background: linear-gradient(135deg, rgba(244, 114, 182, 0.15) 0%, rgba(157, 23, 77, 0.1) 100%);
+        }
+
+        .text-pink-gradient {
+            background: linear-gradient(to right, #ffffff, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-container {
+            filter: drop-shadow(0 0 15px rgba(244, 114, 182, 0.5));
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-6">
-    <div class="max-w-3xl w-full text-center">
-        <!-- Logo & Header -->
-        <header class="mb-12">
-            <h1 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 tracking-tighter mb-2">
-                KIRAMITSU
-            </h1>
-            <p class="text-slate-400 font-medium tracking-widest uppercase text-sm">Management Control System</p>
-            <div class="h-1 w-20 bg-blue-500 mx-auto mt-4 rounded-full"></div>
+<body class="min-h-screen flex flex-col items-center justify-center p-4 md:p-8">
+
+    <div class="animated-bg"></div>
+
+    <div class="max-w-4xl w-full">
+        <!-- HEADER -->
+        <header class="text-center mb-12 relative">
+            <div class="inline-block px-4 py-1 mb-6 rounded-full border border-pink-500/30 bg-pink-500/10 text-pink-400 text-[10px] font-black tracking-[0.3em] uppercase">
+                Internal Infrastructure v2.5
+            </div>
+            
+            <!-- Logo Section -->
+            <div class="relative flex flex-col items-center mb-2">
+                <!-- TEMPAT LOGO JPG BAPAK -->
+                <div class="logo-container mb-4">
+                    <img src="kiramitsu.png" alt="Kiramitsu Logo" onerror="this.src='https://ui-avatars.com/api/?name=K&background=ec4899&color=fff&size=128'" class="w-24 h-24 rounded-full border-2 border-pink-500/50 p-1 object-cover">
+                </div>
+
+                <h1 class="text-6xl md:text-7xl font-black tracking-tighter logo-glow italic">
+                    <span class="text-white">KIRA</span><span class="text-pink-500">MITSU</span>
+                </h1>
+                <div class="absolute top-10 -right-8 w-12 h-12 border-2 border-pink-500/20 rounded-full animate-ping opacity-20"></div>
+            </div>
+            
+            <div class="flex items-center justify-center gap-4 mt-2">
+                <div class="h-[1px] w-12 bg-gradient-to-r from-transparent to-pink-500/50"></div>
+                <p class="text-pink-200/60 font-bold tracking-[0.2em] uppercase text-xs">Management System</p>
+                <div class="h-[1px] w-12 bg-gradient-to-l from-transparent to-pink-500/50"></div>
+            </div>
         </header>
 
-        <!-- Menu Grid -->
+        <!-- MENU GRID -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Menu 1: Sales Daily -->
-            <a href="dailreport.html" class="nav-card p-8 rounded-2xl flex flex-col items-center text-center group">
-                <div class="icon-box w-16 h-16 rounded-xl flex items-center justify-center mb-6 border border-slate-700 group-hover:border-blue-500 transition-colors text-blue-400 text-3xl">
-                    📊
+            
+            <!-- Menu 1: Sales -->
+            <a href="dailreport.html" class="glass-card group p-8 rounded-3xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity font-black">
+                    <span class="text-6xl text-pink-200">01</span>
                 </div>
-                <h2 class="text-xl font-bold mb-2 text-slate-100">Daily Report</h2>
-                <p class="text-slate-400 text-sm leading-relaxed">Input penjualan harian, cek estimasi revenue, dan salin laporan closing otomatis.</p>
-                <span class="mt-6 text-blue-400 font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
-                    Buka App <span>→</span>
-                </span>
+                <div class="nav-icon w-14 h-14 rounded-2xl flex items-center justify-center mb-6 border border-white/10 group-hover:border-pink-500/50 transition-colors">
+                    <span class="text-2xl group-hover:scale-125 transition-transform duration-500">📊</span>
+                </div>
+                <h2 class="text-xl font-extrabold text-white mb-2 group-hover:text-pink-400 transition-colors">Kalkulator Harian</h2>
+                <p class="text-pink-100/60 text-sm leading-relaxed mb-6">Pusat input penjualan harian Kiramitsu. Cek revenue dan generate laporan closing otomatis.</p>
+                <div class="flex items-center text-pink-400 text-xs font-black uppercase tracking-widest gap-2">
+                    Access Terminal <span class="group-hover:translate-x-2 transition-transform">→</span>
+                </div>
             </a>
 
-            <!-- Menu 2: Weekly Rekap -->
-            <a href="weekreport.html" class="nav-card p-8 rounded-2xl flex flex-col items-center text-center group">
-                <div class="icon-box w-16 h-16 rounded-xl flex items-center justify-center mb-6 border border-slate-700 group-hover:border-purple-500 transition-colors text-purple-400 text-3xl">
-                    🗓️
+            <!-- Menu 2: Weekly -->
+            <a href="weekreport.html" class="glass-card group p-8 rounded-3xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity font-black">
+                    <span class="text-6xl text-pink-200">02</span>
                 </div>
-                <h2 class="text-xl font-bold mb-2 text-slate-100">Weekly Report/h2>
-                <p class="text-slate-400 text-sm leading-relaxed">Kumpulan laporan pendapatan mingguan khusus untuk HRD dan Management Kiramitsu.</p>
-                <span class="mt-6 text-purple-400 font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
-                    Buka App <span>→</span>
-                </span>
+                <div class="nav-icon w-14 h-14 rounded-2xl flex items-center justify-center mb-6 border border-white/10 group-hover:border-pink-500/50 transition-colors">
+                    <span class="text-2xl group-hover:scale-125 transition-transform duration-500">🗓️</span>
+                </div>
+                <h2 class="text-xl font-extrabold text-white mb-2 group-hover:text-pink-400 transition-colors">Rekap Mingguan</h2>
+                <p class="text-pink-100/60 text-sm leading-relaxed mb-6">Database laporan mingguan. Evaluasi performa pendapatan untuk Management & HRD.</p>
+                <div class="flex items-center text-pink-400 text-xs font-black uppercase tracking-widest gap-2">
+                    Review Data <span class="group-hover:translate-x-2 transition-transform">→</span>
+                </div>
             </a>
 
-            <!-- Menu 3: Barang Olahan -->
-            <a href="processedgoods.html" class="nav-card p-8 rounded-2xl flex flex-col items-center text-center group">
-                <div class="icon-box w-16 h-16 rounded-xl flex items-center justify-center mb-6 border border-slate-700 group-hover:border-purple-500 transition-colors text-purple-400 text-3xl">
-                    📦
+            <!-- Menu 3: Outbound -->
+            <a href="pengeluaranolahan.html" class="glass-card group p-8 rounded-3xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity font-black">
+                    <span class="text-6xl text-pink-200">03</span>
                 </div>
-                <h2 class="text-xl font-bold mb-2 text-slate-100">Pengeluaran Barang Olahan</h2>
-                <p class="text-slate-400 text-sm leading-relaxed">Input barang olahan, input qty, dan salinan laporan.</p>
-                <span class="mt-6 text-purple-400 font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
-                    Buka App <span>→</span>
-                </span>
+                <div class="nav-icon w-14 h-14 rounded-2xl flex items-center justify-center mb-6 border border-white/10 group-hover:border-pink-500/50 transition-colors">
+                    <span class="text-2xl group-hover:scale-125 transition-transform duration-500">📤</span>
+                </div>
+                <h2 class="text-xl font-extrabold text-white mb-2 group-hover:text-pink-400 transition-colors">Pengeluaran Olahan</h2>
+                <p class="text-pink-100/60 text-sm leading-relaxed mb-6">Catat setiap bahan olahan yang keluar dari inventory. Monitor stok secara akurat.</p>
+                <div class="flex items-center text-pink-400 text-xs font-black uppercase tracking-widest gap-2">
+                    Create Report <span class="group-hover:translate-x-2 transition-transform">→</span>
+                </div>
             </a>
+
+            <!-- Menu 4: Inbound -->
+            <a href="pemasukanolahan.html" class="glass-card group p-8 rounded-3xl relative overflow-hidden border-l-4 border-l-pink-500/50">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity font-black">
+                    <span class="text-6xl text-pink-200">04</span>
+                </div>
+                <div class="nav-icon w-14 h-14 rounded-2xl flex items-center justify-center mb-6 border border-white/10 group-hover:border-pink-500/50 transition-colors">
+                    <span class="text-2xl group-hover:scale-125 transition-transform duration-500">📥</span>
+                </div>
+                <h2 class="text-xl font-extrabold text-white mb-2 group-hover:text-pink-400 transition-colors">Pemasukan Bahan</h2>
+                <p class="text-pink-100/60 text-sm leading-relaxed mb-6">Update stok bahan baku yang baru masuk (Supplier/Inbound). Pastikan data sinkron.</p>
+                <div class="flex items-center text-pink-400 text-xs font-black uppercase tracking-widest gap-2">
+                    Restock Input <span class="group-hover:translate-x-2 transition-transform">→</span>
+                </div>
+            </a>
+
         </div>
 
-        <!-- Footer Info -->
-        <div class="mt-16 pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="text-left">
-                <p class="text-slate-300 font-semibold">Nuel Zaverio</p>
-                <p class="text-slate-500 text-xs uppercase tracking-widest">Authorized HRD Admin</p>
+        <!-- FOOTER INFO -->
+        <footer class="mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-pink-500/20 border border-pink-500/40 flex items-center justify-center font-bold text-pink-400 shadow-[0_0_15px_rgba(236,72,153,0.3)]">NZ</div>
+                <div>
+                    <p class="text-white text-sm font-bold">Nuel Zaverio</p>
+                    <p class="text-[9px] text-pink-400/60 uppercase tracking-widest font-black">Authorized HRD Admin</p>
+                </div>
             </div>
-            <div class="px-4 py-2 bg-slate-900 rounded-full border border-slate-800">
-                <p class="text-[10px] text-slate-500 font-mono">SYSTEM STATUS: <span class="text-green-500">ONLINE</span></p>
+            
+            <div class="flex gap-4">
+                <div class="px-4 py-2 bg-pink-900/20 rounded-xl border border-pink-500/10 flex items-center gap-3">
+                    <div class="w-2 h-2 rounded-full bg-pink-500 animate-pulse shadow-[0_0_8px_rgba(236,72,153,0.8)]"></div>
+                    <span class="text-[10px] text-pink-200/50 font-mono tracking-tighter uppercase">Server: <span class="text-pink-400 font-bold tracking-normal uppercase">Kiramitsu-Main-Node</span></span>
+                </div>
             </div>
-        </div>
+        </footer>
     </div>
+
 </body>
 </html>
