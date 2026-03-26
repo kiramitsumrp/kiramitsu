@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiramitsu Weekly Rekap - HRD System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; font-family: 'Inter', sans-serif; }
+        .card { background-color: #1e293b; border: 1px solid #334155; border-radius: 12px; }
+        input { background-color: #0f172a !important; border: 1px solid #475569 !important; color: white !important; font-size: 0.75rem !important; padding: 0.4rem !important; }
+        .btn-action { background-color: #8b5cf6; transition: all 0.3s; }
+        .btn-action:hover { background-color: #7c3aed; transform: translateY(-2px); }
+        .nav-link { color: #94a3b8; transition: all 0.2s; }
+        .nav-link:hover { color: #3b82f6; }
+        .day-label { font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        .qty-input::placeholder { color: #475569; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        <!-- NAVIGATION -->
+        <nav class="mb-6 flex items-center justify-between border-b border-slate-800 pb-4">
+            <div class="flex gap-4 items-center">
+                <a href="index.html" class="nav-link text-sm font-medium">← Menu Utama</a>
+                <span class="text-slate-700">|</span>
+                <span class="text-purple-400 font-bold tracking-tight italic text-lg uppercase font-black">Weekly HRD Recap</span>
+            </div>
+            <div class="text-right">
+                <span id="displayBadge" class="text-[10px] bg-purple-500/20 text-purple-400 px-3 py-1 rounded-full border border-purple-500/30 font-bold uppercase tracking-widest">ADMIN MODE</span>
+            </div>
+        </nav>
+
+        <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+            <!-- INPUT SECTION -->
+            <div class="xl:col-span-2 space-y-4 max-h-[85vh] overflow-y-auto pr-2" id="inputContainer">
+                <!-- User Profile & Periode -->
+                <div class="card p-4 border-purple-500/30 bg-purple-500/5 space-y-3">
+                    <h2 class="text-xs font-black uppercase text-purple-400 tracking-widest flex items-center gap-2">
+                        <span>👤</span> Identitas & Periode
+                    </h2>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[9px] text-slate-500 uppercase font-bold">Nama Admin</label>
+                            <input type="text" id="inputNama" value="Nuel Zaverio" class="w-full rounded" oninput="updateReport()">
+                        </div>
+                        <div>
+                            <label class="text-[9px] text-slate-500 uppercase font-bold">Jabatan</label>
+                            <input type="text" id="inputJabatan" value="HRD" class="w-full rounded" oninput="updateReport()">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-[9px] text-slate-500 uppercase font-bold">Range Periode (Teks)</label>
+                        <input type="text" id="inputPeriode" value="22 Mar - 28 Mar 2026" class="w-full rounded font-bold text-blue-400" oninput="updateReport()">
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center px-1">
+                    <h2 class="text-sm font-black uppercase text-slate-300 tracking-widest">📝 Penjualan Harian</h2>
+                    <span class="text-[10px] text-slate-500 font-mono italic">Input jumlah unit saja</span>
+                </div>
+
+                <!-- Data per hari digenerate via JS -->
+                <div id="daysWrapper" class="space-y-4"></div>
+            </div>
+
+            <!-- PREVIEW SECTION -->
+            <div class="xl:col-span-2 space-y-4">
+                <div class="card p-6 flex flex-col h-full shadow-2xl relative">
+                    <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-3">
+                        <h2 class="text-lg font-black italic">REPORT PREVIEW</h2>
+                        <button onclick="copyReport()" class="btn-action px-6 py-2 rounded-lg text-xs font-bold uppercase tracking-widest shadow-lg shadow-purple-500/20">Salin Laporan</button>
+                    </div>
+
+                    <div id="reportPreview" class="bg-black/40 p-5 rounded-xl border border-slate-800 font-mono text-[11px] leading-relaxed whitespace-pre-wrap overflow-y-auto h-[550px]">
+Laporan akan otomatis ter-generate di sini...
+                    </div>
+
+                    <div class="mt-4 grid grid-cols-2 gap-4">
+                        <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+                            <p class="text-[10px] text-slate-500 font-bold uppercase">Total Mingguan</p>
+                            <p id="grandTotal" class="text-xl font-black text-green-400">Rp 0</p>
+                        </div>
+                        <button onclick="resetData()" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg text-xs font-bold border border-red-500/20 transition-all">Reset Semua Data</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PRICES = {
+            amer: 65000, vodka: 85000, azul: 105000,
+            fries: 60000, chips: 70000, rokok: 50000,
+            vipBasic: 1500000, vipTema: 2500000
+        };
+
+        // Daftar kunci hari
+        const dayKeys = ["day1", "day2", "day3", "day4", "day5", "day6", "day7"];
+
+        function formatIDR(num) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(num);
+        }
+
+        function createInputFields() {
+            const wrapper = document.getElementById('daysWrapper');
+            dayKeys.forEach((key, i) => {
+                const dayCard = document.createElement('div');
+                dayCard.className = 'card p-4 space-y-3';
+                dayCard.innerHTML = `
+                    <div class="flex justify-between items-center border-b border-slate-700 pb-2 mb-2">
+                        <input type="text" id="label_${key}" value="TGL.." class="!w-32 !bg-transparent !border-none !p-0 font-black text-blue-400 italic text-sm uppercase tracking-tighter focus:ring-0" oninput="updateReport()">
+                        <label class="flex items-center gap-2 text-[10px] text-slate-500 cursor-pointer">
+                            <input type="checkbox" id="skip_${key}" onchange="updateReport()"> Libur
+                        </label>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <input type="number" id="amer_${key}" placeholder="Amer" class="qty-input" oninput="updateReport()">
+                        <input type="number" id="vodka_${key}" placeholder="Vodka" class="qty-input" oninput="updateReport()">
+                        <input type="number" id="azul_${key}" placeholder="Azul" class="qty-input" oninput="updateReport()">
+                        <input type="number" id="fries_${key}" placeholder="Fries" class="qty-input" oninput="updateReport()">
+                        <input type="number" id="chips_${key}" placeholder="Chips" class="qty-input" oninput="updateReport()">
+                        <input type="number" id="rokok_${key}" placeholder="Rokok" class="qty-input" oninput="updateReport()">
+                        <input type="number" id="vipb_${key}" placeholder="VIP Basic" class="qty-input" oninput="updateReport()">
+                        <input type="number" id="vipt_${key}" placeholder="VIP Tema" class="qty-input" oninput="updateReport()">
+                    </div>
+                    <div>
+                        <input type="text" id="note_${key}" placeholder="Tambahkan catatan harian (opsional)..." class="w-full !p-2 !text-[10px] rounded opacity-60" oninput="updateReport()">
+                    </div>
+                `;
+                wrapper.appendChild(dayCard);
+            });
+            
+            // Set default labels
+            const defaultLabels = ["22 MARET", "23 MARET", "24 MARET", "25 MARET", "26 MARET", "27 MARET", "28 MARET"];
+            dayKeys.forEach((key, i) => {
+                document.getElementById(`label_${key}`).value = defaultLabels[i] + " 2026";
+            });
+        }
+
+        function updateReport() {
+            const nama = document.getElementById('inputNama').value;
+            const jabatan = document.getElementById('inputJabatan').value;
+            const periode = document.getElementById('inputPeriode').value;
+            
+            // Update UI Badge
+            document.getElementById('displayBadge').innerText = nama.toUpperCase();
+
+            let grandTotal = 0;
+            let report = `### [ REKAP MINGGUAN KIRAMITSU ]\n👤 Nama    : ${nama}\n💼 Jabatan : ${jabatan}\n\n`;
+            report += `\`\`\`Periode: ${periode}\`\`\`\n\n`;
+
+            dayKeys.forEach(key => {
+                const dayLabel = document.getElementById(`label_${key}`).value;
+                const skip = document.getElementById(`skip_${key}`).checked;
+                const note = document.getElementById(`note_${key}`).value;
+                
+                if (skip) {
+                    report += `\`\`\`${dayLabel}\n- P. Amer: .. | P. Vodka: .. | P. Azul: ..\n- F. Fries: .. | F. Chips: .. | P. Rokok: ..\n- VIP Basic: .. | VIP Tema: ..\n> TOTAL: Rp 0\n> NOTE: ${note || 'TIDAK ADA PENJUALAN'}\`\`\`\n\n`;
+                } else {
+                    const qA = parseInt(document.getElementById(`amer_${key}`).value) || 0;
+                    const qV = parseInt(document.getElementById(`vodka_${key}`).value) || 0;
+                    const qAz = parseInt(document.getElementById(`azul_${key}`).value) || 0;
+                    const qF = parseInt(document.getElementById(`fries_${key}`).value) || 0;
+                    const qC = parseInt(document.getElementById(`chips_${key}`).value) || 0;
+                    const qR = parseInt(document.getElementById(`rokok_${key}`).value) || 0;
+                    const qVb = parseInt(document.getElementById(`vipb_${key}`).value) || 0;
+                    const qVt = parseInt(document.getElementById(`vipt_${key}`).value) || 0;
+
+                    const dayTotal = (qA * PRICES.amer) + (qV * PRICES.vodka) + (qAz * PRICES.azul) + 
+                                   (qF * PRICES.fries) + (qC * PRICES.chips) + (qR * PRICES.rokok) + 
+                                   (qVb * PRICES.vipBasic) + (qVt * PRICES.vipTema);
+                    
+                    grandTotal += dayTotal;
+
+                    report += `\`\`\`${dayLabel}\n`;
+                    report += `- P. Amer: ${qA} | P. Vodka: ${qV} | P. Azul: ${qAz}\n`;
+                    report += `- F. Fries: ${qF} | F. Chips: ${qC} | P. Rokok: ${qR}\n`;
+                    report += `- VIP Basic: ${qVb} | VIP Tema: ${qVt}\n`;
+                    report += `> TOTAL: ${formatIDR(dayTotal)}\n`;
+                    if(note) report += `> NOTE: ${note}\n`;
+                    report += `\`\`\`\n\n`;
+                }
+            });
+
+            const status = grandTotal > 0 ? "DONE" : "ON GOING";
+            report += `\`\`\`━━━━━━━━━━━━━━━━━━━━━━━━\n💎 TOTAL MINGGUAN: ${formatIDR(grandTotal)} (${status})\n━━━━━━━━━━━━━━━━━━━━━━━━\`\`\``;
+            
+            document.getElementById('reportPreview').innerText = report;
+            document.getElementById('grandTotal').innerText = formatIDR(grandTotal);
+        }
+
+        function copyReport() {
+            const text = document.getElementById('reportPreview').innerText;
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            
+            const btn = document.querySelector('.btn-action');
+            btn.innerText = "BERHASIL DISALIN!";
+            setTimeout(() => btn.innerText = "SALIN LAPORAN", 2000);
+        }
+
+        function resetData() {
+            if(confirm("Hapus semua input data mingguan?")) {
+                document.querySelectorAll('input[type="number"]').forEach(i => i.value = "");
+                document.querySelectorAll('input[type="checkbox"]').forEach(i => i.checked = false);
+                document.querySelectorAll('input[type="text"]').forEach(i => {
+                    if(!i.id.includes('Nama') && !i.id.includes('Jabatan') && !i.id.includes('Periode') && !i.id.includes('label')) {
+                        i.value = "";
+                    }
+                });
+                updateReport();
+            }
+        }
+
+        window.onload = () => {
+            createInputFields();
+            updateReport();
+        };
+    </script>
+</body>
+</html>
