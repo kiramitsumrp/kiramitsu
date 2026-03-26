@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiramitsu Sales Dashboard - Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; font-family: 'Inter', sans-serif; }
+        .card { background-color: #1e293b; border: 1px solid #334155; border-radius: 12px; }
+        input { background-color: #0f172a !important; border: 1px solid #475569 !important; color: white !important; }
+        .btn-primary { background-color: #3b82f6; transition: all 0.3s; }
+        .btn-primary:hover { background-color: #2563eb; transform: translateY(-1px); }
+        .btn-copy { background-color: #10b981; }
+        .btn-copy:hover { background-color: #059669; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-4xl mx-auto">
+        <header class="mb-8 flex justify-between items-end">
+            <div>
+                <h1 class="text-3xl font-bold text-blue-400 tracking-tight">KIRAMITSU</h1>
+                <p class="text-slate-400">Sales Dashboard & Calculator</p>
+            </div>
+            <div class="text-right">
+                <p id="headerNameDisplay" class="font-semibold text-slate-200">Nuel Zaverio</p>
+                <p class="text-xs text-slate-500 uppercase">HRD Division</p>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- INPUT SECTION -->
+            <div class="card p-6">
+                <h2 class="text-xl font-semibold mb-4 border-b border-slate-700 pb-2">Input Penjualan Harian</h2>
+                <div class="space-y-4">
+                    <!-- Kasir & Waktu -->
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm text-slate-400 mb-1">Nama Kasir</label>
+                            <input type="text" id="kasirInput" value="Nuel Zaverio" class="w-full p-2 rounded text-sm">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm text-slate-400 mb-1">Tanggal</label>
+                                <input type="date" id="dateInput" class="w-full p-2 rounded text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-slate-400 mb-1">Jam Closing</label>
+                                <input type="text" id="timeInput" placeholder="Contoh: 05:00 WIB" class="w-full p-2 rounded text-sm">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Produk -->
+                    <div class="grid grid-cols-2 gap-4 border-t border-slate-700 pt-4">
+                        <div>
+                            <label class="block text-sm text-slate-400 mb-1">P. Amer (65k)</label>
+                            <input type="number" id="qAmer" value="0" min="0" class="w-full p-2 rounded sales-qty">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-slate-400 mb-1">P. Vodka (85k)</label>
+                            <input type="number" id="qVodka" value="0" min="0" class="w-full p-2 rounded sales-qty">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-slate-400 mb-1">P. Azul (105k)</label>
+                            <input type="number" id="qAzul" value="0" min="0" class="w-full p-2 rounded sales-qty">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-slate-400 mb-1">Rokok & Korek (50k)</label>
+                            <input type="number" id="qRokok" value="0" min="0" class="w-full p-2 rounded sales-qty">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm text-slate-400 mb-1">French Fries (60k)</label>
+                            <input type="number" id="qFries" value="0" min="0" class="w-full p-2 rounded sales-qty">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-slate-400 mb-1">Fish & Chips (70k)</label>
+                            <input type="number" id="qChips" value="0" min="0" class="w-full p-2 rounded sales-qty">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 border-t border-slate-700 pt-4">
+                        <div>
+                            <label class="block text-sm text-slate-400 mb-1">VIP Basic (1.5jt)</label>
+                            <input type="number" id="qVipBasic" value="0" min="0" class="w-full p-2 rounded sales-qty">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-slate-400 mb-1">VIP Tema (2.5jt)</label>
+                            <input type="number" id="qVipTema" value="0" min="0" class="w-full p-2 rounded sales-qty">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESULT SECTION -->
+            <div class="card p-6 flex flex-col">
+                <h2 class="text-xl font-semibold mb-4 border-b border-slate-700 pb-2">Ringkasan Laporan</h2>
+                <div id="outputContainer" class="flex-grow">
+                    <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-xs font-mono mb-4 whitespace-pre" id="reportText">
+Silakan masukkan data...
+                    </div>
+                </div>
+                <div class="mt-auto space-y-2">
+                    <div class="text-lg font-bold text-green-400 flex justify-between px-2">
+                        <span>ESTIMASI TOTAL:</span>
+                        <span id="grandTotalLabel">Rp 0</span>
+                    </div>
+                    <button onclick="copyToClipboard()" class="btn-primary btn-copy w-full py-3 rounded-lg font-bold uppercase tracking-wider">Salin Daily Report</button>
+                    <button onclick="resetForm()" class="w-full py-2 text-slate-500 text-sm hover:text-slate-300">Reset Form</button>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="mt-8 text-center text-slate-500 text-xs">
+            Kiramitsu Management System &bull; Version 1.2 &bull; Update: Flexible Cashier Name
+        </footer>
+    </div>
+
+    <script>
+        const PRICES = {
+            amer: 65000,
+            vodka: 85000,
+            azul: 105000,
+            fries: 60000,
+            chips: 70000,
+            rokok: 50000,
+            vipBasic: 1500000,
+            vipTema: 2500000
+        };
+
+        function formatIDR(num) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(num);
+        }
+
+        function generateReport() {
+            const kasirName = document.getElementById('kasirInput').value || '---';
+            const dateVal = document.getElementById('dateInput').value || '---';
+            const timeVal = document.getElementById('timeInput').value || '--:-- WIB';
+            
+            // Update UI Header
+            document.getElementById('headerNameDisplay').innerText = kasirName;
+
+            const qA = parseInt(document.getElementById('qAmer').value) || 0;
+            const qV = parseInt(document.getElementById('qVodka').value) || 0;
+            const qAz = parseInt(document.getElementById('qAzul').value) || 0;
+            const qR = parseInt(document.getElementById('qRokok').value) || 0;
+            const qF = parseInt(document.getElementById('qFries').value) || 0;
+            const qC = parseInt(document.getElementById('qChips').value) || 0;
+            const qVb = parseInt(document.getElementById('qVipBasic').value) || 0;
+            const qVt = parseInt(document.getElementById('qVipTema').value) || 0;
+
+            const total = (qA * PRICES.amer) + (qV * PRICES.vodka) + (qAz * PRICES.azul) + 
+                          (qR * PRICES.rokok) + (qF * PRICES.fries) + (qC * PRICES.chips) + 
+                          (qVb * PRICES.vipBasic) + (qVt * PRICES.vipTema);
+
+            document.getElementById('grandTotalLabel').innerText = formatIDR(total);
+
+            const report = `┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+      𝑲𝑰𝑹𝑨𝑴𝑰𝑻𝑺𝑼 𝑫𝑨𝑰𝑳𝑹𝑬𝑷𝑶𝑹𝑻 (𝑪𝑳𝑶𝑺𝑰𝑵𝑮)
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+📅 Periode  : ${dateVal}
+⏰ Closing  : ${timeVal}
+👤 Kasir    : ${kasirName}
+
+🍸 [ SIGNATURE PACKAGES ]
+• Paket Amer        : ${qA} PC  (${formatIDR(qA * PRICES.amer)})
+• Paket Vodka       : ${qV} PC  (${formatIDR(qV * PRICES.vodka)})
+• Paket Azul        : ${qAz} PC  (${formatIDR(qAz * PRICES.azul)})
+
+🍽️ [ DINING & EXTRA ]
+• Pkt French Fries  : ${qF} PC  (${formatIDR(qF * PRICES.fries)})
+• Pkt Fish & Chips  : ${qC} PC  (${formatIDR(qC * PRICES.chips)})
+• Rokok & Korek     : ${qR} PC  (${formatIDR(qR * PRICES.rokok)})
+
+🏨 [ ROOM BOOKING ]
+• VIP Room Basic    : ${qVb} Room (${formatIDR(qVb * PRICES.vipBasic)})
+• VIP Room Tema     : ${qVt} Room (${formatIDR(qVt * PRICES.vipTema)})
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+💰 TOTAL REVENUE   : ${formatIDR(total)}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+
+            document.getElementById('reportText').innerText = report;
+        }
+
+        function copyToClipboard() {
+            const text = document.getElementById('reportText').innerText;
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            
+            const btn = document.querySelector('.btn-copy');
+            const originalText = btn.innerText;
+            btn.innerText = "BERHASIL DISALIN!";
+            setTimeout(() => { btn.innerText = originalText; }, 2000);
+        }
+
+        function resetForm() {
+            document.querySelectorAll('.sales-qty').forEach(el => el.value = 0);
+            document.getElementById('timeInput').value = "";
+            generateReport();
+        }
+
+        document.querySelectorAll('input').forEach(el => {
+            el.addEventListener('input', generateReport);
+        });
+
+        window.onload = () => {
+            const now = new Date();
+            document.getElementById('dateInput').valueAsDate = now;
+            generateReport();
+        };
+    </script>
+</body>
+</html>
