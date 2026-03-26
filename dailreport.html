@@ -215,8 +215,9 @@ Silakan masukkan data...
             generateReport();
         }
 
-        document.querySelectorAll('input').forEach(el => {
+        document.querySelectorAll('input, select').forEach(el => {
             el.addEventListener('input', generateReport);
+            el.addEventListener('change', generateReport);
         });
 
         window.onload = () => {
