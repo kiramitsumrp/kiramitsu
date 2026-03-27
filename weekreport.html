@@ -11,7 +11,7 @@
             background: radial-gradient(circle at top right, #2d1b2e, #0f172a); 
             color: #f8fafc; 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            min-height: screen;
+            min-height: 100vh;
         }
         
         .glass-card {
@@ -31,56 +31,45 @@
             text-shadow: 0 0 20px rgba(244, 114, 182, 0.5);
         }
 
-        .animated-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            opacity: 0.3;
-            background: 
-                radial-gradient(circle at 10% 20%, #db2777 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, #9d174d 0%, transparent 20%);
-            filter: blur(100px);
-        }
-
-        input, select, textarea {
+        input {
             background: rgba(15, 23, 42, 0.6) !important;
             border: 1px solid rgba(244, 114, 182, 0.2) !important;
             color: white !important;
             transition: all 0.3s;
         }
 
-        input:focus, select:focus {
+        input:focus {
             border-color: #f472b6 !important;
             box-shadow: 0 0 10px rgba(244, 114, 182, 0.3);
             outline: none;
         }
 
-        .btn-discord {
-            background: linear-gradient(135deg, #5865F2 0%, #4752c4 100%);
-            box-shadow: 0 4px 15px rgba(88, 101, 242, 0.3);
+        .btn-sync {
+            background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
         }
 
         .custom-scrollbar::-webkit-scrollbar { width: 5px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(244, 114, 182, 0.3); border-radius: 10px; }
 
-        .status-badge {
-            background: rgba(244, 114, 182, 0.1);
-            color: #f472b6;
-            border: 1px solid rgba(244, 114, 182, 0.3);
+        .item-label {
+            font-size: 7px;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: rgba(244, 114, 182, 0.5);
+            margin-bottom: 2px;
+            display: block;
         }
     </style>
 </head>
 <body class="p-4 md:p-8">
-    <div class="animated-bg"></div>
-
     <div class="max-w-7xl mx-auto">
         <!-- HEADER -->
         <header class="flex flex-col md:flex-row items-center justify-between mb-10 gap-6 border-b border-pink-500/10 pb-8">
             <div class="flex items-center gap-5">
                 <div class="relative">
                     <img src="kiramitsu.png" alt="Logo" onerror="this.src='https://ui-avatars.com/api/?name=K&background=ec4899&color=fff'" class="w-16 h-16 rounded-full border-2 border-pink-500/30 object-cover shadow-lg">
-                    <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-[#0f172a] rounded-full animate-pulse"></div>
                 </div>
                 <div>
                     <h1 class="text-3xl font-black italic tracking-tighter text-white logo-glow">
@@ -90,13 +79,9 @@
                 </div>
             </div>
 
-            <div class="flex items-center gap-6 rounded-2x1">
-                <a href="index.html" class="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-pink-400 transition-all flex items-center gap-2">
-                    <span class="text-lg">←</span> Back to Dashboard
-                </a>
-                <div class="h-10 w-[1px] bg-white/10"></div>
-                <div class="px-5 py-2 glass-card text-[9px] font-black uppercase tracking-tighter text-pink-400 border-pink-500/20 shadow-[0_0_15px_rgba(236,72,153,0.1)]">
-                    OUTBOUND MONITOR v2.5
+            <div class="flex items-center gap-4">
+                <div class="px-5 py-2 glass-card text-[9px] font-black uppercase tracking-tighter text-pink-400 border-pink-500/20">
+                    STATUS: <span id="syncStatus" class="text-green-400">ONLINE</span>
                 </div>
             </div>
         </header>
@@ -106,29 +91,16 @@
             <div class="xl:col-span-5 space-y-6">
                 <!-- Identity Card -->
                 <div class="glass-card p-6 rounded-3xl border-l-4 border-l-pink-500">
-                    <div class="flex items-center gap-3 mb-6">
-                        <span class="text-xl">🛡️</span>
-                        <h2 class="text-xs font-black uppercase text-pink-400 tracking-widest">Auth Credentials & Period</h2>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 mb-4">
-                        <div class="space-y-2">
-                            <label class="text-[9px] font-black uppercase text-pink-100/40 ml-1">Admin Identity</label>
-                            <select id="inputNama" class="w-full p-3 rounded-xl text-sm outline-none" onchange="handleStaffChange()"></select>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="text-[9px] font-black uppercase text-pink-100/40 ml-1">Admin Name</label>
+                            <input type="text" id="inputNama" class="w-full p-3 rounded-xl text-sm" placeholder="Nama Admin" oninput="window.updateReport()">
                         </div>
-                        <div class="space-y-2">
-                            <label class="text-[9px] font-black uppercase text-pink-100/40 ml-1">Position</label>
-                            <input type="text" id="inputJabatan" class="w-full p-3 rounded-xl text-sm bg-slate-900/40" readonly>
+                        <div class="space-y-1">
+                            <label class="text-[9px] font-black uppercase text-pink-100/40 ml-1">Range Date</label>
+                            <input type="text" id="inputPeriode" class="w-full p-3 rounded-xl text-sm font-bold text-pink-400" placeholder="Contoh: 22 - 28 Mar" oninput="window.updateReport()">
                         </div>
                     </div>
-                    <div class="space-y-2">
-                        <label class="text-[9px] font-black uppercase text-pink-100/40 ml-1">Weekly Range Period</label>
-                        <input type="text" id="inputPeriode" value="22 Mar - 28 Mar 2026" class="w-full p-3 rounded-xl text-sm font-bold text-pink-400" oninput="updateReport()">
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-3 px-2">
-                    <div class="w-2 h-2 rounded-full bg-pink-500 animate-ping"></div>
-                    <h2 class="text-xs font-black uppercase tracking-[0.2em] text-white/80">Input Daily Statistics</h2>
                 </div>
 
                 <!-- Days List -->
@@ -143,246 +115,188 @@
                     <div class="glass-card p-8 rounded-3xl border-t-4 border-t-pink-500 shadow-2xl">
                         <div class="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
                             <div>
-                                <h2 class="text-xl font-black italic tracking-tighter text-white uppercase">Live Report Compilation</h2>
-                                <p class="text-[9px] font-bold uppercase text-pink-500/60 tracking-widest">Encrypted Internal Data</p>
+                                <h2 class="text-xl font-black italic tracking-tighter text-white uppercase">Live Discord Preview</h2>
+                                <p class="text-[9px] font-bold uppercase text-pink-500/60 tracking-widest">Real-time Synchronization</p>
                             </div>
-                            <button onclick="copyReport()" class="px-5 py-2 bg-pink-500/10 hover:bg-pink-500/20 text-pink-400 border border-pink-500/20 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">
-                                Copy Text
+                            <button onclick="window.saveToFirebase()" id="btnSync" class="btn-sync px-6 py-2 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95">
+                                Update Bot Report
                             </button>
                         </div>
 
                         <!-- Preview Text -->
-                        <div id="reportPreview" class="bg-black/40 p-6 rounded-2xl border border-white/5 font-mono text-[12px] leading-relaxed whitespace-pre overflow-y-auto min-h-[480px] text-pink-100/80 custom-scrollbar">
-                            Initialising system...
+                        <div id="reportPreview" class="bg-black/40 p-6 rounded-2xl border border-white/5 font-mono text-[12px] leading-relaxed whitespace-pre overflow-y-auto min-h-[450px] text-pink-100/80 custom-scrollbar">
+                            Initialising database connection...
                         </div>
 
                         <!-- Grand Total Footer -->
-                        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="bg-pink-500/10 p-5 rounded-2xl border border-pink-500/20">
-                                <p class="text-[9px] font-black uppercase text-pink-400 tracking-widest mb-1">Weekly Grand Revenue</p>
-                                <p id="grandTotal" class="text-3xl font-black text-white tracking-tighter">Rp 0</p>
-                            </div>
-                            <button onclick="sendToDiscord()" class="btn-discord flex items-center justify-center gap-3 rounded-2xl p-5 text-sm font-black uppercase tracking-widest transition-transform active:scale-95">
-                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.086 2.157 2.419c0 1.334-.947 2.419-2.157 2.419zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.086 2.157 2.419c0 1.334-.946 2.419-2.157 2.419z"/></svg>
-                                Sync To Discord
-                            </button>
+                        <div class="mt-8 bg-pink-500/10 p-5 rounded-2xl border border-pink-500/20">
+                            <p class="text-[9px] font-black uppercase text-pink-400 tracking-widest mb-1">Weekly Grand Revenue</p>
+                            <p id="grandTotal" class="text-3xl font-black text-white tracking-tighter">Rp 0</p>
                         </div>
-                        <button onclick="resetData()" class="w-full mt-6 py-2 text-[9px] font-black uppercase tracking-[0.4em] text-pink-100/20 hover:text-red-500 transition-colors">Wipe System Memory</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <footer class="mt-12 text-center text-white/20 text-[9px] uppercase tracking-[0.4em] font-black">
-            Kiramitsu Internal System • secure environment • v2.5
-        </footer>
-    <script>
-        const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1486790427049857235/jRILmwKPQ-905tPaRnqYI-bPn82zFJk67CD3qYe_xTc1IK5WfpBkgsfGass9zMHDWCOS";
 
-        const STAFF_DATA = [
-            { nama: "Gison Kiramitsu", jabatan: "CEO" },
-            { nama: "Valish Kiramitsu", jabatan: "Manager" },
-            { nama: "Nuel Zaverio", jabatan: "HRD" },
-            { nama: "Tam Kiramitsu", jabatan: "HRD"},
-            { nama: "Bell Kiramitsu", jabatan: "HRD"},
-            { nama: "Arsan Kiramitsu", jabatan: "HRD"},
-            { nama: "Boru Octarine", jabatan: "Bartender"},
-            { nama: "Davis Lame", jabatan: "Bartender"},
-            { nama: "Fang Yin", jabatan: "Bartender"},
-            { nama: "Alex Kiramitsu", jabatan: "Waiters"},
-            { nama: "Devano Fortuna", jabatan: "Waiters"},
-            { nama: "Rider Alkhareem", jabatan: "Guard"},
-            { nama: "Farah Dominion", jabatan: "Dancer"}
-        ];
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        const PRICES = {
+        // --- KONFIGURASI FIREBASE ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDHc52lZ-22zUmUGOJtFIyqR2QMLy1iOZA",
+            authDomain: "bot-kiramitsu.firebaseapp.com",
+            projectId: "bot-kiramitsu",
+            storageBucket: "bot-kiramitsu.firebasestorage.app",
+            messagingSenderId: "887023607256",
+            appId: "1:887023607256:web:d0aebcee27e6ecbcdc66ad"
+        };
+
+        const HARGA = {
             amer: 65000, vodka: 85000, azul: 105000,
             fries: 60000, chips: 70000, rokok: 50000,
-            vipBasic: 1500000, vipTema: 2500000
+            vip_basic: 1500000, vip_tema: 2500000
         };
 
-        const dayKeys = ["day1", "day2", "day3", "day4", "day5", "day6", "day7"];
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const APP_IDENTIFIER = "kiramitsu-rekap-v2";
+        const docRef = doc(db, 'kiramitsu_data', APP_IDENTIFIER);
 
-        function formatIDR(num) {
-            return new Intl.NumberFormat('id-ID', { 
-                style: 'currency', 
-                currency: 'IDR', 
-                maximumFractionDigits: 0 
-            }).format(num);
-        }
+        const hariKeys = ['senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu', 'minggu'];
+        const items = [
+            { id: 'amer', label: 'Amer' },
+            { id: 'vodka', label: 'Vodka' },
+            { id: 'azul', label: 'Azul' },
+            { id: 'fries', label: 'Fries' },
+            { id: 'chips', label: 'Chips' },
+            { id: 'rokok', label: 'Rokok' },
+            { id: 'vip_basic', label: 'VIP' },
+            { id: 'vip_tema', label: 'VVIP' }
+        ];
 
-        function initStaffList() {
-            const selectNama = document.getElementById('inputNama');
-            selectNama.innerHTML = ""; 
-            STAFF_DATA.forEach(staff => {
-                const opt = document.createElement('option');
-                opt.value = staff.nama;
-                opt.textContent = staff.nama;
-                selectNama.appendChild(opt);
-            });
-            selectNama.value = "Nuel Zaverio";
-            handleStaffChange();
-        }
-
-        function handleStaffChange() {
-            const selectedName = document.getElementById('inputNama').value;
-            const staff = STAFF_DATA.find(s => s.nama === selectedName);
-            if (staff) {
-                document.getElementById('inputJabatan').value = staff.jabatan;
-            }
-            updateReport();
-        }
-
-        function createInputFields() {
-            const wrapper = document.getElementById('daysWrapper');
-            const defaultLabels = ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU", "MINGGU"];
-
-            dayKeys.forEach((key, i) => {
-                const dayCard = document.createElement('div');
-                dayCard.className = 'glass-card p-5 rounded-2xl space-y-4';
-                dayCard.innerHTML = `
-                    <div class="flex justify-between items-center border-b border-white/5 pb-3">
-                        <input type="text" id="label_${key}" value="${defaultLabels[i]}" class="!bg-transparent !border-none !p-0 font-black text-pink-400 italic text-sm uppercase tracking-widest focus:ring-0 w-32" oninput="updateReport()">
-                        <label class="flex items-center gap-2 text-[10px] text-pink-100/40 font-black uppercase cursor-pointer">
-                            <input type="checkbox" id="skip_${key}" onchange="updateReport()" class="accent-pink-500 w-4 h-4"> Libur
-                        </label>
-                    </div>
-                    <div class="grid grid-cols-4 gap-2">
-                        <div class="space-y-1">
-                            <label class="text-[8px] font-black uppercase text-pink-100/30">Amer</label>
-                            <input type="number" id="amer_${key}" placeholder="0" class="w-full rounded-lg p-2 text-center text-xs" oninput="updateReport()">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-[8px] font-black uppercase text-pink-100/30">Vodka</label>
-                            <input type="number" id="vodka_${key}" placeholder="0" class="w-full rounded-lg p-2 text-center text-xs" oninput="updateReport()">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-[8px] font-black uppercase text-pink-100/30">Azul</label>
-                            <input type="number" id="azul_${key}" placeholder="0" class="w-full rounded-lg p-2 text-center text-xs" oninput="updateReport()">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-[8px] font-black uppercase text-pink-100/30">Rokok</label>
-                            <input type="number" id="rokok_${key}" placeholder="0" class="w-full rounded-lg p-2 text-center text-xs" oninput="updateReport()">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-4 gap-2">
-                        <div class="space-y-1">
-                            <label class="text-[8px] font-black uppercase text-pink-100/30">Fries</label>
-                            <input type="number" id="fries_${key}" placeholder="0" class="w-full rounded-lg p-2 text-center text-xs" oninput="updateReport()">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-[8px] font-black uppercase text-pink-100/30">Chips</label>
-                            <input type="number" id="chips_${key}" placeholder="0" class="w-full rounded-lg p-2 text-center text-xs" oninput="updateReport()">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-[8px] font-black uppercase text-pink-100/30">VIP B.</label>
-                            <input type="number" id="vipb_${key}" placeholder="0" class="w-full rounded-lg p-2 text-center text-xs" oninput="updateReport()">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-[8px] font-black uppercase text-pink-100/30">VIP T.</label>
-                            <input type="number" id="vipt_${key}" placeholder="0" class="w-full rounded-lg p-2 text-center text-xs" oninput="updateReport()">
-                        </div>
-                    </div>
-                    <input type="text" id="note_${key}" placeholder="Daily notes..." class="w-full p-2 text-[10px] italic rounded-lg" oninput="updateReport()">
-                `;
-                wrapper.appendChild(dayCard);
-            });
-        }
-
-        function updateReport() {
-            const nama = document.getElementById('inputNama')?.value || "ADMIN";
-            const jabatan = document.getElementById('inputJabatan')?.value || "HRD";
-            const periode = document.getElementById('inputPeriode')?.value || "-";
-
-            const badge = document.getElementById('displayBadge');
-            if (badge) badge.innerText = nama.toUpperCase();
-
-            let grandTotal = 0;
-            let report = `┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n   𝑲𝑰𝑹𝑨𝑴𝑰𝑻𝑺𝑼 𝑾𝑬𝑬𝑲𝑳𝒀 𝑹𝑬𝑲𝑨𝑷 (𝑯𝑹𝑫)\n┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n`;
-            report += `👤 Admin  : ${nama}\n💼 Jabatan: ${jabatan}\n📅 Range  : ${periode}\n\n`;
-
-            dayKeys.forEach(key => {
-                const dayLabel = document.getElementById(`label_${key}`)?.value || "DATE";
-                const skip = document.getElementById(`skip_${key}`)?.checked;
-                const note = document.getElementById(`note_${key}`)?.value || "";
-
-                if (skip) {
-                    report += `[ ${dayLabel} ]\n- STATUS : LIBUR / TUTUP\n> NOTE   : ${note || 'TIDAK ADA AKTIVITAS'}\n\n`;
-                } else {
-                    const qA = parseInt(document.getElementById(`amer_${key}`)?.value) || 0;
-                    const qV = parseInt(document.getElementById(`vodka_${key}`)?.value) || 0;
-                    const qAz = parseInt(document.getElementById(`azul_${key}`)?.value) || 0;
-                    const qF = parseInt(document.getElementById(`fries_${key}`)?.value) || 0;
-                    const qC = parseInt(document.getElementById(`chips_${key}`)?.value) || 0;
-                    const qR = parseInt(document.getElementById(`rokok_${key}`)?.value) || 0;
-                    const qVb = parseInt(document.getElementById(`vipb_${key}`)?.value) || 0;
-                    const qVt = parseInt(document.getElementById(`vipt_${key}`)?.value) || 0;
-
-                    const dayTotal = (qA * PRICES.amer) + (qV * PRICES.vodka) + (qAz * PRICES.azul) +
-                                    (qF * PRICES.fries) + (qC * PRICES.chips) + (qR * PRICES.rokok) +
-                                    (qVb * PRICES.vipBasic) + (qVt * PRICES.vipTema);
-
-                    grandTotal += dayTotal;
-
-                    report += `[ ${dayLabel} ]\n`;
-                    report += `- P. Amer: ${qA} | P. Vodka: ${qV} | P. Azul: ${qAz}\n`;
-                    report += `- F. Fries: ${qF} | F. Chips: ${qC} | P. Rokok: ${qR}\n`;
-                    report += `- VIP Basic: ${qVb} | VIP Tema: ${qVt}\n`;
-                    report += `> INCOME : ${formatIDR(dayTotal)}\n`;
-                    if (note) report += `> NOTE   : ${note}\n`;
-                    report += `\n`;
+        async function init() {
+            try {
+                await signInAnonymously(auth);
+                const snap = await getDoc(docRef);
+                renderUI();
+                if (snap.exists()) {
+                    loadData(snap.data());
                 }
+                window.updateReport();
+            } catch (e) {
+                console.error(e);
+                document.getElementById('syncStatus').innerText = "ERROR";
+            }
+        }
+
+        function renderUI() {
+            const wrapper = document.getElementById('daysWrapper');
+            hariKeys.forEach(day => {
+                const card = document.createElement('div');
+                card.className = 'glass-card p-5 rounded-2xl space-y-4';
+                card.innerHTML = `
+                    <div class="flex justify-between items-center border-b border-white/5 pb-2">
+                        <h3 class="font-black text-pink-400 italic text-sm uppercase tracking-widest">${day}</h3>
+                    </div>
+                    <div class="grid grid-cols-4 gap-3">
+                        ${items.map(item => `
+                            <div>
+                                <label class="item-label">${item.label}</label>
+                                <input type="number" id="${day}_${item.id}" value="0" min="0" 
+                                    class="w-full rounded-lg p-2 text-center text-xs" oninput="window.updateReport()">
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                wrapper.appendChild(card);
+            });
+        }
+
+        function loadData(data) {
+            document.getElementById('inputNama').value = data.admin || "";
+            document.getElementById('inputPeriode').value = data.rangeDate || "";
+            hariKeys.forEach(day => {
+                items.forEach(item => {
+                    const val = data.days?.[day]?.[item.id] || 0;
+                    const el = document.getElementById(`${day}_${item.id}`);
+                    if (el) el.value = val;
+                });
+            });
+        }
+
+        window.updateReport = function() {
+            const admin = document.getElementById('inputNama').value || "Belum Diatur";
+            const date = document.getElementById('inputPeriode').value || "Belum Diatur";
+            
+            let grandTotal = 0;
+            let report = `┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n   𝑲𝑰𝑹𝑨𝑴𝑰𝑻𝑺𝑼 𝑾𝑬𝑬𝑲𝑳𝒀 𝑹𝑬𝑲𝑨𝑷\n┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n`;
+            report += `👤 ADMIN  : ${admin}\n`;
+            report += `📅 TANGGAL: ${date}\n`;
+            report += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+
+            hariKeys.forEach(day => {
+                let subtotal = 0;
+                items.forEach(item => {
+                    const q = parseInt(document.getElementById(`${day}_${item.id}`).value) || 0;
+                    subtotal += q * HARGA[item.id];
+                });
+                grandTotal += subtotal;
+
+                const d = (key) => document.getElementById(`${day}_${key}`).value || 0;
+                
+                report += `[ ${day.toUpperCase()} ]\n`;
+                report += `Amer: ${d('amer')} | Vodka: ${d('vodka')} | Azul: ${d('azul')} | Fries: ${d('fries')}\n`;
+                report += `Chips: ${d('chips')} | Rokok: ${d('rokok')} | VIP: ${d('vip_basic')} | VVIP: ${d('vip_tema')}\n`;
+                report += `> Income: Rp ${subtotal.toLocaleString('id-ID')}\n\n`;
             });
 
-            report += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n💎 TOTAL MINGGUAN: ${formatIDR(grandTotal)}\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+            report += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n💎 TOTAL MINGGUAN: Rp ${grandTotal.toLocaleString('id-ID')}\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
             
             document.getElementById('reportPreview').innerText = report;
-            document.getElementById('grandTotal').innerText = formatIDR(grandTotal);
-        }
-
-        async function sendToDiscord() {
-            const content = document.getElementById('reportPreview').innerText;
-            const btn = document.getElementById('btnSendDiscord');
-            
-            try {
-                const response = await fetch(DISCORD_WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ content: "```\n" + content + "\n```" })
-                });
-
-                if (response.ok) {
-                    alert('✅ Rekap Mingguan berhasil disinkronkan ke Discord!');
-                } else {
-                    throw new Error('Gagal mengirim');
-                }
-            } catch (error) {
-                alert('❌ Error: Gagal terhubung ke Discord Server.');
-            }
-        }
-
-        function copyReport() {
-            const content = document.getElementById('reportPreview').innerText;
-            const temp = document.createElement('textarea');
-            temp.value = content;
-            document.body.appendChild(temp);
-            temp.select();
-            document.execCommand('copy');
-            document.body.removeChild(temp);
-            alert('📋 Teks berhasil disalin ke clipboard!');
-        }
-
-        function resetData() {
-            if(confirm('🚨 SYSTEM WIPE: Hapus semua input data mingguan?')) {
-                location.reload();
-            }
-        }
-
-        window.onload = () => {
-            initStaffList();
-            createInputFields();
-            updateReport();
+            document.getElementById('grandTotal').innerText = `Rp ${grandTotal.toLocaleString('id-ID')}`;
         };
+
+        window.saveToFirebase = async function() {
+            const btn = document.getElementById('btnSync');
+            const originalText = btn.innerText;
+            btn.innerText = "SAVING...";
+            btn.disabled = true;
+
+            const daysData = {};
+            hariKeys.forEach(day => {
+                daysData[day] = {};
+                items.forEach(item => {
+                    daysData[day][item.id] = parseInt(document.getElementById(`${day}_${item.id}`).value) || 0;
+                });
+            });
+
+            try {
+                const snap = await getDoc(docRef);
+                const oldData = snap.exists() ? snap.data() : {};
+
+                const payload = {
+                    ...oldData,
+                    admin: document.getElementById('inputNama').value,
+                    rangeDate: document.getElementById('inputPeriode').value,
+                    days: daysData,
+                    lastUpdated: new Date().toISOString()
+                };
+
+                await setDoc(docRef, payload, { merge: true });
+                alert("✅ Sync Sukses! Laporan di Discord akan diperbarui otomatis.");
+            } catch (e) {
+                alert("❌ Sync Gagal: " + e.message);
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        };
+
+        init();
     </script>
 </body>
 </html>
