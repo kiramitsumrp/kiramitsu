@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiramitsu Weekly Recap - HRD System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            background: radial-gradient(circle at top right, #2d1b2e, #0f172a); 
+            color: #f8fafc; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            min-height: 100vh;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(244, 114, 182, 0.1);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            border-radius: 15px;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(244, 114, 182, 0.4);
+            box-shadow: 0 10px 30px -10px rgba(244, 114, 182, 0.2);
+        }
+
+        .logo-glow {
+            text-shadow: 0 0 20px rgba(244, 114, 182, 0.5);
+        }
+
+        input {
+            background: rgba(15, 23, 42, 0.6) !important;
+            border: 1px solid rgba(244, 114, 182, 0.2) !important;
+            color: white !important;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            border-color: #f472b6 !important;
+            box-shadow: 0 0 10px rgba(244, 114, 182, 0.3);
+            outline: none;
+        }
+
+        .btn-sync {
+            background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(244, 114, 182, 0.3); border-radius: 10px; }
+
+        .item-label {
+            font-size: 7px;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: rgba(244, 114, 182, 0.5);
+            margin-bottom: 2px;
+            display: block;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- HEADER -->
+        <header class="flex flex-col md:flex-row items-center justify-between mb-10 gap-6 border-b border-pink-500/10 pb-8">
+            <div class="flex items-center gap-5">
+                <div class="relative">
+                    <img src="kiramitsu.png" alt="Logo" onerror="this.src='https://ui-avatars.com/api/?name=K&background=ec4899&color=fff'" class="w-16 h-16 rounded-full border-2 border-pink-500/30 object-cover shadow-lg">
+                </div>
+                <div>
+                    <h1 class="text-3xl font-black italic tracking-tighter text-white logo-glow">
+                        KIRA<span class="text-pink-500">MITSU</span> <span class="text-pink-200/50">WEEKLY</span>
+                    </h1>
+                    <p class="text-[10px] font-black uppercase tracking-[0.4em] text-pink-400/60">Human Resources Department</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="px-5 py-2 glass-card text-[9px] font-black uppercase tracking-tighter text-pink-400 border-pink-500/20">
+                    STATUS: <span id="syncStatus" class="text-green-400">ONLINE</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+            <!-- INPUT AREA -->
+            <div class="xl:col-span-5 space-y-6">
+                <!-- Identity Card -->
+                <div class="glass-card p-6 rounded-3xl border-l-4 border-l-pink-500">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="text-[9px] font-black uppercase text-pink-100/40 ml-1">Admin Name</label>
+                            <input type="text" id="inputNama" class="w-full p-3 rounded-xl text-sm" placeholder="Nama Admin" oninput="window.updateReport()">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[9px] font-black uppercase text-pink-100/40 ml-1">Range Date</label>
+                            <input type="text" id="inputPeriode" class="w-full p-3 rounded-xl text-sm font-bold text-pink-400" placeholder="Contoh: 22 - 28 Mar" oninput="window.updateReport()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Days List -->
+                <div id="daysWrapper" class="space-y-4 max-h-[600px] overflow-y-auto custom-scrollbar pr-2 pb-10">
+                    <!-- JS Generated Cards -->
+                </div>
+            </div>
+
+            <!-- PREVIEW AREA -->
+            <div class="xl:col-span-7">
+                <div class="sticky top-8 space-y-6">
+                    <div class="glass-card p-8 rounded-3xl border-t-4 border-t-pink-500 shadow-2xl">
+                        <div class="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
+                            <div>
+                                <h2 class="text-xl font-black italic tracking-tighter text-white uppercase">Live Discord Preview</h2>
+                                <p class="text-[9px] font-bold uppercase text-pink-500/60 tracking-widest">Real-time Synchronization</p>
+                            </div>
+                            <button onclick="window.saveToFirebase()" id="btnSync" class="btn-sync px-6 py-2 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95">
+                                Update Bot Report
+                            </button>
+                        </div>
+
+                        <!-- Preview Text -->
+                        <div id="reportPreview" class="bg-black/40 p-6 rounded-2xl border border-white/5 font-mono text-[12px] leading-relaxed whitespace-pre overflow-y-auto min-h-[450px] text-pink-100/80 custom-scrollbar">
+                            Initialising database connection...
+                        </div>
+
+                        <!-- Grand Total Footer -->
+                        <div class="mt-8 bg-pink-500/10 p-5 rounded-2xl border border-pink-500/20">
+                            <p class="text-[9px] font-black uppercase text-pink-400 tracking-widest mb-1">Weekly Grand Revenue</p>
+                            <p id="grandTotal" class="text-3xl font-black text-white tracking-tighter">Rp 0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        // --- KONFIGURASI FIREBASE ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDHc52lZ-22zUmUGOJtFIyqR2QMLy1iOZA",
+            authDomain: "bot-kiramitsu.firebaseapp.com",
+            projectId: "bot-kiramitsu",
+            storageBucket: "bot-kiramitsu.firebasestorage.app",
+            messagingSenderId: "887023607256",
+            appId: "1:887023607256:web:d0aebcee27e6ecbcdc66ad"
+        };
+
+        const HARGA = {
+            amer: 65000, vodka: 85000, azul: 105000,
+            fries: 60000, chips: 70000, rokok: 50000,
+            vip_basic: 1500000, vip_tema: 2500000
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const APP_IDENTIFIER = "kiramitsu-rekap-v2";
+        const docRef = doc(db, 'kiramitsu_data', APP_IDENTIFIER);
+
+        const hariKeys = ['senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu', 'minggu'];
+        const items = [
+            { id: 'amer', label: 'Amer' },
+            { id: 'vodka', label: 'Vodka' },
+            { id: 'azul', label: 'Azul' },
+            { id: 'fries', label: 'Fries' },
+            { id: 'chips', label: 'Chips' },
+            { id: 'rokok', label: 'Rokok' },
+            { id: 'vip_basic', label: 'VIP' },
+            { id: 'vip_tema', label: 'VVIP' }
+        ];
+
+        async function init() {
+            try {
+                await signInAnonymously(auth);
+                const snap = await getDoc(docRef);
+                renderUI();
+                if (snap.exists()) {
+                    loadData(snap.data());
+                }
+                window.updateReport();
+            } catch (e) {
+                console.error(e);
+                document.getElementById('syncStatus').innerText = "ERROR";
+            }
+        }
+
+        function renderUI() {
+            const wrapper = document.getElementById('daysWrapper');
+            hariKeys.forEach(day => {
+                const card = document.createElement('div');
+                card.className = 'glass-card p-5 rounded-2xl space-y-4';
+                card.innerHTML = `
+                    <div class="flex justify-between items-center border-b border-white/5 pb-2">
+                        <h3 class="font-black text-pink-400 italic text-sm uppercase tracking-widest">${day}</h3>
+                    </div>
+                    <div class="grid grid-cols-4 gap-3">
+                        ${items.map(item => `
+                            <div>
+                                <label class="item-label">${item.label}</label>
+                                <input type="number" id="${day}_${item.id}" value="0" min="0" 
+                                    class="w-full rounded-lg p-2 text-center text-xs" oninput="window.updateReport()">
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                wrapper.appendChild(card);
+            });
+        }
+
+        function loadData(data) {
+            document.getElementById('inputNama').value = data.admin || "";
+            document.getElementById('inputPeriode').value = data.rangeDate || "";
+            hariKeys.forEach(day => {
+                items.forEach(item => {
+                    const val = data.days?.[day]?.[item.id] || 0;
+                    const el = document.getElementById(`${day}_${item.id}`);
+                    if (el) el.value = val;
+                });
+            });
+        }
+
+        window.updateReport = function() {
+            const admin = document.getElementById('inputNama').value || "Belum Diatur";
+            const date = document.getElementById('inputPeriode').value || "Belum Diatur";
+            
+            let grandTotal = 0;
+            let report = `┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n   𝑲𝑰𝑹𝑨𝑴𝑰𝑻𝑺𝑼 𝑾𝑬𝑬𝑲𝑳𝒀 𝑹𝑬𝑲𝑨𝑷\n┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n`;
+            report += `👤 ADMIN  : ${admin}\n`;
+            report += `📅 TANGGAL: ${date}\n`;
+            report += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+
+            hariKeys.forEach(day => {
+                let subtotal = 0;
+                items.forEach(item => {
+                    const q = parseInt(document.getElementById(`${day}_${item.id}`).value) || 0;
+                    subtotal += q * HARGA[item.id];
+                });
+                grandTotal += subtotal;
+
+                const d = (key) => document.getElementById(`${day}_${key}`).value || 0;
+                
+                report += `[ ${day.toUpperCase()} ]\n`;
+                report += `Amer: ${d('amer')} | Vodka: ${d('vodka')} | Azul: ${d('azul')} | Fries: ${d('fries')}\n`;
+                report += `Chips: ${d('chips')} | Rokok: ${d('rokok')} | VIP: ${d('vip_basic')} | VVIP: ${d('vip_tema')}\n`;
+                report += `> Income: Rp ${subtotal.toLocaleString('id-ID')}\n\n`;
+            });
+
+            report += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n💎 TOTAL MINGGUAN: Rp ${grandTotal.toLocaleString('id-ID')}\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+            
+            document.getElementById('reportPreview').innerText = report;
+            document.getElementById('grandTotal').innerText = `Rp ${grandTotal.toLocaleString('id-ID')}`;
+        };
+
+        window.saveToFirebase = async function() {
+            const btn = document.getElementById('btnSync');
+            const originalText = btn.innerText;
+            btn.innerText = "SAVING...";
+            btn.disabled = true;
+
+            const daysData = {};
+            hariKeys.forEach(day => {
+                daysData[day] = {};
+                items.forEach(item => {
+                    daysData[day][item.id] = parseInt(document.getElementById(`${day}_${item.id}`).value) || 0;
+                });
+            });
+
+            try {
+                const snap = await getDoc(docRef);
+                const oldData = snap.exists() ? snap.data() : {};
+
+                const payload = {
+                    ...oldData,
+                    admin: document.getElementById('inputNama').value,
+                    rangeDate: document.getElementById('inputPeriode').value,
+                    days: daysData,
+                    lastUpdated: new Date().toISOString()
+                };
+
+                await setDoc(docRef, payload, { merge: true });
+                alert("✅ Sync Sukses! Laporan di Discord akan diperbarui otomatis.");
+            } catch (e) {
+                alert("❌ Sync Gagal: " + e.message);
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        };
+
+        init();
+    </script>
+</body>
+</html>
