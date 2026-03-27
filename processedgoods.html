@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiramitsu - Laporan Bahan Keluar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; font-family: 'Inter', sans-serif; }
+        .card { background-color: #1e293b; border: 1px solid #334155; border-radius: 12px; }
+        input, select, textarea { 
+            background-color: #0f172a !important; 
+            border: 1px solid #475569 !important; 
+            color: white !important; 
+            font-size: 0.875rem !important; 
+            padding: 0.6rem !important; 
+            width: 100%;
+            border-radius: 8px;
+        }
+        input::placeholder { color: #475569; }
+        .btn-action { background-color: #ec4899; transition: all 0.3s; }
+        .btn-action:hover { background-color: #db2777; transform: translateY(-2px); }
+        .btn-discord { background-color: #5865F2; transition: all 0.3s; }
+        .btn-discord:hover { background-color: #4752c4; transform: translateY(-2px); }
+        .nav-link { color: #94a3b8; transition: all 0.2s; }
+        .nav-link:hover { color: #f472b6; }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] { -moz-appearance: textfield; }
+
+        .image-preview {
+            width: 100%;
+            height: 120px;
+            border: 2px dashed #475569;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: #0f172a;
+            cursor: pointer;
+        }
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-5xl mx-auto">
+        <!-- NAVIGASI -->
+        <nav class="mb-6 flex items-center justify-between border-b border-slate-800 pb-4">
+            <div class="flex gap-4 items-center">
+                <a href="index.html" class="nav-link text-sm font-medium">← Dashboard Penjualan</a>
+                <span class="text-slate-700">|</span>
+                <span class="text-pink-400 font-bold tracking-tight italic text-lg uppercase font-black">Raw Material Tracker</span>
+            </div>
+            <div class="text-right">
+                <span class="text-[10px] bg-pink-500/20 text-pink-400 px-3 py-1 rounded-full border border-pink-500/30 font-bold uppercase tracking-widest">Manual Mode + Photo Attach</span>
+            </div>
+        </nav>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- INPUT SECTION -->
+            <div class="space-y-6">
+                
+                <!-- ATTACH PHOTO (Manual Only) -->
+                <div class="card p-6 shadow-xl space-y-3">
+                    <h2 class="text-sm font-black uppercase text-pink-400 tracking-widest flex items-center gap-2">
+                        <span>📷</span> Lampirkan Foto Bukti
+                    </h2>
+                    <input type="file" id="fileInput" accept="image/*" class="hidden" onchange="previewImage(this)">
+                    <div class="image-preview" onclick="document.getElementById('fileInput').click()" id="imgContainer">
+                        <div class="text-center text-slate-500" id="placeholderText">
+                            <p class="text-xl">📸</p>
+                            <p class="text-[10px] font-bold uppercase">Klik untuk pilih foto</p>
+                        </div>
+                    </div>
+                    <p class="text-[9px] text-slate-500 italic text-center">*Foto akan ikut dikirim ke Discord sebagai lampiran</p>
+                </div>
+
+                <!-- INFO PENGAMBILAN -->
+                <div class="card p-6 shadow-xl space-y-4">
+                    <h2 class="text-sm font-black uppercase text-pink-400 tracking-widest flex items-center gap-2">
+                        <span>📥</span> Info Pengambilan
+                    </h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-[10px] text-slate-500 uppercase font-bold ml-1">Tanggal</label>
+                            <input type="text" id="inTanggal" placeholder="DD/MM/YYYY" oninput="generateReport()">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-500 uppercase font-bold ml-1">Nama Petugas</label>
+                            <select id="inNama" onchange="generateReport()">
+                                <option value="Nuel Zaverio">Nuel Zaverio</option>
+                                <option value="Valish Kiramitsu">Valish Kiramitsu</option>
+                                <option value="Gison Kiramitsu">Gison Kiramitsu</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-slate-500 uppercase font-bold ml-1">Tujuan Pengambilan</label>
+                        <select id="inTujuan" onchange="generateReport()">
+                            <option value="Produksi Paket / Restock Bar">Produksi Paket / Restock Bar</option>
+                            <option value="Event Khusus">Event Khusus</option>
+                            <option value="Afkir / Rusak">Afkir / Rusak</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- JUMLAH BAHAN -->
+                <div class="card p-6 shadow-xl space-y-4">
+                    <h2 class="text-sm font-black uppercase text-slate-300 tracking-widest flex items-center gap-2">
+                        <span>📦</span> Jumlah Bahan Keluar
+                    </h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label class="text-[10px] text-slate-500 font-bold ml-1">Olahan Kentang</label><input type="number" id="mat_kentang" placeholder="0" oninput="generateReport()"></div>
+                        <div><label class="text-[10px] text-slate-500 font-bold ml-1">Olahan Jeruk</label><input type="number" id="mat_jeruk" placeholder="0" oninput="generateReport()"></div>
+                        <div><label class="text-[10px] text-slate-500 font-bold ml-1">Olahan Garam</label><input type="number" id="mat_garam" placeholder="0" oninput="generateReport()"></div>
+                        <div><label class="text-[10px] text-slate-500 font-bold ml-1">Ikan Salmon</label><input type="number" id="mat_salmon" placeholder="0" oninput="generateReport()"></div>
+                        <div><label class="text-[10px] text-slate-500 font-bold ml-1">Anggur</label><input type="number" id="mat_anggur" placeholder="0" oninput="generateReport()"></div>
+                        <div><label class="text-[10px] text-slate-500 font-bold ml-1">Gula</label><input type="number" id="mat_gula" placeholder="0" oninput="generateReport()"></div>
+                        <div><label class="text-[10px] text-slate-500 font-bold ml-1">Es Batu</label><input type="number" id="mat_es" placeholder="0" oninput="generateReport()"></div>
+                        <div><label class="text-[10px] text-slate-500 font-bold ml-1">Minyak Bumi</label><input type="number" id="mat_minyak" placeholder="0" oninput="generateReport()"></div>
+                    </div>
+                </div>
+
+                <!-- CATATAN -->
+                <div class="card p-6 shadow-xl space-y-2">
+                    <label class="text-[10px] text-slate-500 uppercase font-bold ml-1">Alasan / Catatan Tambahan</label>
+                    <textarea id="inCatatan" rows="2" placeholder="Contoh: Azul 10 Paket" oninput="generateReport()"></textarea>
+                </div>
+            </div>
+
+            <!-- PREVIEW SECTION -->
+            <div class="space-y-4">
+                <div class="card p-8 flex flex-col h-full shadow-2xl relative border-t-4 border-t-pink-500">
+                    <div class="flex flex-col gap-4 mb-6 border-b border-slate-700 pb-4">
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-lg font-black italic">TEXT GENERATOR</h2>
+                            <button onclick="copyReport()" class="btn-action px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-pink-500/20">Salin Teks</button>
+                        </div>
+                        <button id="btnSendDiscord" onclick="sendToDiscord()" class="btn-discord w-full py-3 rounded-lg text-xs font-black uppercase tracking-[0.2em] flex items-center justify-center gap-2">
+                            <span>🚀</span> Kirim ke Discord
+                        </button>
+                    </div>
+
+                    <div id="reportPreview" class="bg-black/40 p-6 rounded-xl border border-slate-800 font-mono text-[12px] leading-relaxed whitespace-pre-wrap overflow-y-auto min-h-[450px]">
+Laporan akan otomatis muncul di sini...
+                    </div>
+
+                    <div class="mt-4">
+                        <button onclick="resetInputs()" class="w-full text-[10px] text-slate-600 hover:text-pink-400 uppercase font-bold tracking-widest transition-colors py-2">
+                            Kosongkan Formulir
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1486790436914856108/_zO-ec3G0DHyh-K8JV87eMqSAulBx71VOx49kYGl89S_05KHmB8-A5RwyVZvIJ1FytSo";
+        let selectedFile = null;
+
+        function previewImage(input) {
+            const file = input.files[0];
+            if (file) {
+                selectedFile = file;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const container = document.getElementById('imgContainer');
+                    container.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function generateReport() {
+            const tgl = document.getElementById('inTanggal').value || '--/--/----';
+            const nama = document.getElementById('inNama').value;
+            const tujuan = document.getElementById('inTujuan').value;
+            const catatan = document.getElementById('inCatatan').value || '-';
+
+            const materials = [
+                { id: 'mat_kentang', label: 'Olahan Kentang' },
+                { id: 'mat_jeruk', label: 'Olahan Jeruk' },
+                { id: 'mat_garam', label: 'Olahan Garam' },
+                { id: 'mat_salmon', label: 'Ikan Salmon' },
+                { id: 'mat_anggur', label: 'Anggur' },
+                { id: 'mat_gula', label: 'Gula' },
+                { id: 'mat_es', label: 'Es Batu' },
+                { id: 'mat_minyak', label: 'Minyak Bumi' }
+            ];
+
+            let report = "```\n";
+            report += `┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n`;
+            report += `      LAPORAN KELUAR BAHAN BAKU\n`;
+            report += `┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n`;
+            report += `📅 Tanggal : ${tgl}\n`;
+            report += `👤 Nama    : ${nama}\n`;
+            report += `📥 Tujuan  : [${tujuan}]\n\n`;
+            report += `📦 [ DAFTAR BAHAN KELUAR ]\n`;
+
+            materials.forEach(m => {
+                const val = document.getElementById(m.id).value;
+                const displayVal = val ? `${val} PC` : '0 PC';
+                report += `• ${m.label.padEnd(16)} : ${displayVal}\n`;
+            });
+
+            report += `\n📝 CATATAN (Alasan Keluar):\n- ${catatan}\n\n`;
+            report += `⚠️ SISA STOK ESTIMASI: [ Lihat Catatan Kulkas ]\n`;
+            report += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+            report += "```";
+
+            document.getElementById('reportPreview').innerText = report;
+        }
+
+        async function sendToDiscord() {
+            const reportText = document.getElementById('reportPreview').innerText;
+            const btn = document.getElementById('btnSendDiscord');
+            
+            try {
+                btn.disabled = true;
+                btn.innerText = "SEDANG MENGIRIM...";
+
+                const formData = new FormData();
+                formData.append('content', reportText);
+                
+                if (selectedFile) {
+                    formData.append('file', selectedFile);
+                }
+
+                const response = await fetch(DISCORD_WEBHOOK_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    btn.innerText = "✅ TERKIRIM KE DISCORD!";
+                    btn.style.backgroundColor = "#16a34a";
+                    setTimeout(() => {
+                        btn.innerText = "🚀 Kirim ke Discord";
+                        btn.style.backgroundColor = "";
+                        btn.disabled = false;
+                    }, 3000);
+                }
+            } catch (error) {
+                alert("Kesalahan jaringan saat mengirim ke Discord!");
+                btn.disabled = false;
+                btn.innerText = "🚀 Kirim ke Discord";
+            }
+        }
+
+        function copyReport() {
+            const text = document.getElementById('reportPreview').innerText;
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            
+            const btn = document.querySelector('.btn-action');
+            btn.innerText = "BERHASIL!";
+            setTimeout(() => btn.innerText = "Salin Teks", 2000);
+        }
+
+        function resetInputs() {
+            if(confirm("Hapus semua data input?")) {
+                document.querySelectorAll('input[type="number"]').forEach(i => i.value = "");
+                document.getElementById('inCatatan').value = "";
+                document.getElementById('fileInput').value = "";
+                selectedFile = null;
+                document.getElementById('imgContainer').innerHTML = `
+                    <div class="text-center text-slate-500" id="placeholderText">
+                        <p class="text-xl">📸</p>
+                        <p class="text-[10px] font-bold uppercase">Klik untuk pilih foto</p>
+                    </div>`;
+                generateReport();
+            }
+        }
+
+        window.onload = () => {
+            const today = new Date();
+            const dateStr = today.getDate().toString().padStart(2, '0') + '/' + 
+                            (today.getMonth() + 1).toString().padStart(2, '0') + '/' + 
+                            today.getFullYear();
+            document.getElementById('inTanggal').value = dateStr;
+            generateReport();
+        };
+    </script>
+</body>
+</html>
