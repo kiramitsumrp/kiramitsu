@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kiramitsu Sales Dashboard - Management System</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap"
+        rel="stylesheet">
     <style>
-        body { 
-            background: radial-gradient(circle at top right, #2d1b2e, #0f172a); 
-            color: #f8fafc; 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            min-height: screen;
+        body {
+            background: radial-gradient(circle at top right, #2d1b2e, #0f172a);
+            color: #f8fafc;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
         }
-        
+
         .glass-card {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(12px);
@@ -33,347 +35,525 @@
             outline: none;
         }
 
+        .tab-active {
+            border-bottom: 2px solid #f472b6;
+            color: #f472b6;
+        }
+
         .btn-discord {
             background: linear-gradient(135deg, #5865F2 0%, #4752c4 100%);
             box-shadow: 0 4px 15px rgba(88, 101, 242, 0.3);
-            transition: all 0.3s;
         }
 
-        .btn-discord:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(88, 101, 242, 0.5);
-            filter: brightness(1.1);
+        .btn-sheets {
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+            box-shadow: 0 4px 15px rgba(22, 163, 74, 0.3);
         }
-
-        .logo-container {
-            filter: drop-shadow(0 0 10px rgba(244, 114, 182, 0.3));
-        }
-
-        ::-webkit-calendar-picker-indicator { filter: invert(1) sepia(100%) saturate(1000%) hue-rotate(300deg); }
 
         .report-preview {
             background: rgba(0, 0, 0, 0.4);
             font-family: 'Courier New', Courier, monospace;
-            scrollbar-width: thin;
-            scrollbar-color: #f472b6 rgba(0,0,0,0);
         }
+
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #f472b6;
+            color: #fff;
+            text-align: center;
+            border-radius: 12px;
+            padding: 16px;
+            position: fixed;
+            z-index: 100;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-weight: 800;
+        }
+
+        #toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        @keyframes fadein {
+            from { bottom: 0; opacity: 0; }
+            to { bottom: 30px; opacity: 1; }
+        }
+
+        @keyframes fadeout {
+            from { bottom: 30px; opacity: 1; }
+            to { bottom: 0; opacity: 0; }
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
+        ::-webkit-scrollbar-thumb { background: #f472b6; border-radius: 10px; }
     </style>
 </head>
+
 <body class="p-4 md:p-8">
-    <div class="max-w-5xl mx-auto">
-        
-        <!-- HEADER WITH LOGO -->
-        <header class="mb-10 flex flex-col md:flex-row justify-between items-center md:items-end gap-6">
+    <div id="toast">Notifikasi</div>
+
+    <div class="max-w-6xl mx-auto">
+        <!-- HEADER -->
+        <header class="mb-10 flex flex-col md:flex-row justify-between items-center gap-6">
             <div class="flex items-center gap-4">
-                <div class="logo-container">
-                    <!-- GANTI SRC DIBAWAH INI DENGAN FILE .JPG BAPAK -->
-                    <img src="kiramitsu.png" alt="Logo" onerror="this.src='https://ui-avatars.com/api/?name=K&background=ec4899&color=fff'" class="w-16 h-16 rounded-full border-2 border-pink-500/30 p-1 object-cover">
-                </div>
+                <img src="kiramitsu.png"
+                    class="w-16 h-16 rounded-full border-2 border-pink-500/30 p-1">
                 <div>
-                    <h1 class="text-3xl font-black text-white italic tracking-tighter">KIRA<span class="text-pink-500">MITSU</span></h1>
-                    <p class="text-pink-200/50 text-[10px] uppercase font-bold tracking-[0.3em]">Sales Dashboard & Calculator</p>
-                    <a href="index.html" class="text-pink-500 text-[10px] font-black uppercase tracking-widest hover:text-white transition-colors mt-1 inline-block">← Back to Menu</a>
+                    <h1 class="text-3xl font-black text-white italic tracking-tighter">KIRA<span
+                            class="text-pink-500">MITSU</span></h1>
+                    <p class="text-pink-200/50 text-[10px] uppercase font-bold tracking-[0.3em]">Internal Management System</p>
                 </div>
             </div>
-            
-            <div class="text-center md:text-right border-l-2 md:border-l-0 md:border-r-2 border-pink-500/30 px-4">
-                <p id="headerNameDisplay" class="font-bold text-slate-100 uppercase tracking-tight text-lg">Nuel Zaverio</p>
-                <p id="headerJobDisplay" class="text-[10px] text-pink-500 uppercase font-black tracking-[0.2em]">HRD • DAILY REPORT SYSTEM</p>
+
+            <!-- TAB SWITCHER -->
+            <div class="flex bg-white/5 p-1 rounded-2xl border border-white/10">
+                <button onclick="switchTab('staff')" id="tabStaff"
+                    class="px-6 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all tab-active">Staff
+                    Input</button>
+                <button onclick="switchTab('pj')" id="tabPJ"
+                    class="px-6 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all">Rekapitulasi
+                    (PJ)</button>
+                    
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="index.html" class="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-pink-400 transition-all flex items-center gap-2">
+                    <span class="text-lg">←</span> Back to Dashboard
+                </a>
+               
             </div>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            
-            <!-- INPUT SECTION (Left) -->
+        <!-- STAFF INPUT SECTION -->
+        <div id="staffSection" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             <div class="lg:col-span-7 space-y-6">
                 <div class="glass-card p-6 rounded-3xl shadow-xl">
-                    <h2 class="text-sm font-black mb-6 text-pink-400 uppercase tracking-[0.2em] flex items-center gap-3">
-                        <span class="p-2 bg-pink-500/10 rounded-lg">✍️</span> Input Penjualan
-                    </h2>
-                    
-                    <div class="space-y-6">
-                        <!-- Admin Info -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="space-y-1">
-                                <label class="text-[9px] text-pink-200/40 uppercase font-black ml-1">Nama Kasir</label>
-                                <select id="kasirInput" class="w-full p-3 rounded-xl text-sm input-field outline-none" onchange="handleStaffChange()">
-                                    <!-- Dinamis dari JS -->
-                                </select>
-                            </div>
-                            <div class="space-y-1">
-                                <label class="text-[9px] text-pink-200/40 uppercase font-black ml-1">Jabatan</label>
-                                <input type="text" id="jabatanInput" class="w-full p-3 rounded-xl text-sm input-field opacity-60 cursor-not-allowed" readonly>
-                            </div>
+                    <h2 class="text-sm font-black mb-6 text-pink-400 uppercase tracking-[0.2em]">✍️ Staff Daily Input</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div class="space-y-1">
+                            <label class="text-[9px] text-pink-200/40 uppercase font-black ml-1">Nama Staff</label>
+                            <select id="kasirInput" class="w-full p-3 rounded-xl text-sm input-field outline-none"
+                                onchange="handleStaffChange()"></select>
                         </div>
-
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="space-y-1">
-                                <label class="text-[9px] text-pink-200/40 uppercase font-black ml-1">Tanggal</label>
-                                <input type="date" id="dateInput" class="w-full p-3 rounded-xl text-sm input-field">
-                            </div>
-                            <div class="space-y-1">
-                                <label class="text-[9px] text-pink-200/40 uppercase font-black ml-1">Jam Closing</label>
-                                <input type="text" id="timeInput" placeholder="05:00 WIB" class="w-full p-3 rounded-xl text-sm input-field">
-                            </div>
-                        </div>
-
-                        <!-- Product Grid -->
-                        <div class="pt-4 border-t border-white/5">
-                            <p class="text-[10px] font-black text-pink-500/50 uppercase tracking-widest mb-4">Inventory & Services</p>
-                            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                <div class="bg-white/5 p-3 rounded-2xl border border-white/5">
-                                    <label class="block text-[9px] text-slate-400 uppercase font-bold mb-2">P. Amer (65k)</label>
-                                    <input type="number" id="qAmer" value="0" min="0" class="w-full bg-transparent text-white font-bold outline-none sales-qty text-center text-lg">
-                                </div>
-                                <div class="bg-white/5 p-3 rounded-2xl border border-white/5">
-                                    <label class="block text-[9px] text-slate-400 uppercase font-bold mb-2">P. Vodka (85k)</label>
-                                    <input type="number" id="qVodka" value="0" min="0" class="w-full bg-transparent text-white font-bold outline-none sales-qty text-center text-lg">
-                                </div>
-                                <div class="bg-white/5 p-3 rounded-2xl border border-white/5">
-                                    <label class="block text-[9px] text-slate-400 uppercase font-bold mb-2">P. Azul (105k)</label>
-                                    <input type="number" id="qAzul" value="0" min="0" class="w-full bg-transparent text-white font-bold outline-none sales-qty text-center text-lg">
-                                </div>
-                                <div class="bg-white/5 p-3 rounded-2xl border border-white/5">
-                                    <label class="block text-[9px] text-slate-400 uppercase font-bold mb-2">F. Fries (60k)</label>
-                                    <input type="number" id="qFries" value="0" min="0" class="w-full bg-transparent text-white font-bold outline-none sales-qty text-center text-lg">
-                                </div>
-                                <div class="bg-white/5 p-3 rounded-2xl border border-white/5">
-                                    <label class="block text-[9px] text-slate-400 uppercase font-bold mb-2">F. Chips (70k)</label>
-                                    <input type="number" id="qChips" value="0" min="0" class="w-full bg-transparent text-white font-bold outline-none sales-qty text-center text-lg">
-                                </div>
-                                <div class="bg-white/5 p-3 rounded-2xl border border-white/5">
-                                    <label class="block text-[9px] text-slate-400 uppercase font-bold mb-2">Rokok (50k)</label>
-                                    <input type="number" id="qRokok" value="0" min="0" class="w-full bg-transparent text-white font-bold outline-none sales-qty text-center text-lg">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="bg-pink-500/5 p-4 rounded-2xl border border-pink-500/10">
-                                <label class="block text-[9px] text-pink-400 uppercase font-black mb-2 tracking-tighter">VIP Basic (1.5jt)</label>
-                                <input type="number" id="qVipBasic" value="0" min="0" class="w-full bg-transparent text-white font-black outline-none sales-qty text-xl">
-                            </div>
-                            <div class="bg-pink-500/5 p-4 rounded-2xl border border-pink-500/10">
-                                <label class="block text-[9px] text-pink-400 uppercase font-black mb-2 tracking-tighter">VIP Tema (2.5jt)</label>
-                                <input type="number" id="qVipTema" value="0" min="0" class="w-full bg-transparent text-white font-black outline-none sales-qty text-xl">
-                            </div>
+                        <div class="space-y-1">
+                            <label class="text-[9px] text-pink-200/40 uppercase font-black ml-1">Tanggal</label>
+                            <input type="date" id="dateInput" class="w-full p-3 rounded-xl text-sm input-field">
                         </div>
                     </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        <div class="bg-white/5 p-3 rounded-2xl border border-white/5">
+                            <label class="block text-[9px] text-slate-400 uppercase font-bold mb-1">Amer</label>
+                            <input type="number" id="qAmer" value="0"
+                                class="w-full bg-transparent text-white font-bold outline-none text-center text-lg">
+                        </div>
+                        <div class="bg-white/5 p-3 rounded-2xl border border-white/5">
+                            <label class="block text-[9px] text-slate-400 uppercase font-bold mb-1">Vodka</label>
+                            <input type="number" id="qVodka" value="0"
+                                class="w-full bg-transparent text-white font-bold outline-none text-center text-lg">
+                        </div>
+                        <div class="bg-white/5 p-3 rounded-2xl border border-white/5">
+                            <label class="block text-[9px] text-slate-400 uppercase font-bold mb-1">Azul</label>
+                            <input type="number" id="qAzul" value="0"
+                                class="w-full bg-transparent text-white font-bold outline-none text-center text-lg">
+                        </div>
+                        <div class="bg-white/5 p-3 rounded-2xl border border-white/5">
+                            <label class="block text-[9px] text-slate-400 uppercase font-bold mb-1">Fries</label>
+                            <input type="number" id="qFries" value="0"
+                                class="w-full bg-transparent text-white font-bold outline-none text-center text-lg">
+                        </div>
+                        <div class="bg-white/5 p-3 rounded-2xl border border-white/5">
+                            <label class="block text-[9px] text-slate-400 uppercase font-bold mb-1">Chips</label>
+                            <input type="number" id="qChips" value="0"
+                                class="w-full bg-transparent text-white font-bold outline-none text-center text-lg">
+                        </div>
+                        <div class="bg-white/5 p-3 rounded-2xl border border-white/5">
+                            <label class="block text-[9px] text-slate-400 uppercase font-bold mb-1">Rokok</label>
+                            <input type="number" id="qRokok" value="0"
+                                class="w-full bg-transparent text-white font-bold outline-none text-center text-lg">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 mt-3">
+                        <div class="bg-pink-500/5 p-3 rounded-2xl border border-pink-500/10">
+                            <label class="block text-[9px] text-pink-400 uppercase font-black mb-1">VIP Basic</label>
+                            <input type="number" id="qVipBasic" value="0"
+                                class="w-full bg-transparent text-white font-black outline-none text-center text-lg">
+                        </div>
+                        <div class="bg-pink-500/5 p-3 rounded-2xl border border-pink-500/10">
+                            <label class="block text-[9px] text-pink-400 uppercase font-black mb-1">VIP Tema</label>
+                            <input type="number" id="qVipTema" value="0"
+                                class="w-full bg-transparent text-white font-black outline-none text-center text-lg">
+                        </div>
+                    </div>
+
+                    <button id="btnSendSheets" onclick="sendToSheets()"
+                        class="btn-sheets w-full py-4 mt-6 rounded-2xl font-black uppercase tracking-[0.1em] text-white text-[11px] flex items-center justify-center gap-2">
+                        <span>📊</span> KIRIM KE SPREADSHEET
+                    </button>
                 </div>
             </div>
 
-            <!-- RESULT SECTION (Right) -->
+            <!-- PREVIEW STAFF -->
             <div class="lg:col-span-5 flex flex-col gap-6">
-                <div class="glass-card p-6 rounded-3xl flex-grow flex flex-col border-t-4 border-t-pink-500 shadow-2xl">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xs font-black text-pink-200 uppercase tracking-widest flex items-center gap-2">
-                            <span>📄</span> LIVE PREVIEW
-                        </h2>
-                        <button onclick="copyToClipboard()" class="text-[9px] bg-white/10 px-3 py-1.5 rounded-lg uppercase font-black hover:bg-pink-500 transition-colors">Copy Text</button>
-                    </div>
+                <div class="glass-card p-6 rounded-3xl flex-grow flex flex-col border-t-4 border-t-pink-500">
+                    <h2 class="text-xs font-black text-pink-200 uppercase tracking-widest mb-4">📄 PERSONAL PREVIEW</h2>
+                    <div id="reportText"
+                        class="report-preview flex-grow p-4 rounded-2xl border border-white/5 text-[10px] text-pink-100/90 whitespace-pre overflow-y-auto min-h-[300px]">
+                        Data akan muncul di sini...</div>
+                </div>
+            </div>
+        </div>
 
-                    <div id="reportText" class="report-preview flex-grow p-4 rounded-2xl border border-white/5 text-[10px] text-pink-100/90 whitespace-pre overflow-y-auto leading-relaxed mb-6 min-h-[350px]">
-                        Silakan lengkapi data...
-                    </div>
-
-                    <div class="space-y-4 mt-auto">
-                        <div class="bg-pink-500/20 p-4 rounded-2xl border border-pink-500/30 flex justify-between items-center">
-                            <span class="text-[10px] font-black text-pink-300 uppercase">Grand Total Revenue</span>
-                            <span id="grandTotalLabel" class="text-xl font-black text-white">Rp 0</span>
+        <!-- PJ REKAP SECTION -->
+        <div id="pjSection" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div class="lg:col-span-12 space-y-6">
+                <div class="glass-card p-8 rounded-3xl shadow-xl border-t-4 border-t-blue-500">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+                        <div>
+                            <h2 class="text-xl font-black text-blue-400 uppercase tracking-tighter">Rekapitulasi Akhir</h2>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Akumulasi Seluruh Penjualan Staff</p>
                         </div>
-                        
-                        <button id="btnSendDiscord" onclick="sendToDiscord()" class="btn-discord w-full py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-white flex items-center justify-center gap-3">
-                            <span>🚀</span> SEND TO DISCORD
-                        </button>
-                        
-                        <button onclick="resetForm()" class="w-full text-pink-100/30 text-[9px] font-black uppercase tracking-widest hover:text-pink-500 transition-colors">Reset All Inputs</button>
+                        <div class="flex gap-2 flex-wrap justify-center items-end">
+                            <div class="flex flex-col">
+                                <label class="text-[8px] text-blue-300 uppercase font-black mb-1 ml-1">Pilih PJ/Kasir</label>
+                                <select id="pjNamaSelect" class="p-3 rounded-xl text-sm input-field w-44 outline-none" onchange="refreshRekapPreview()"></select>
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="text-[8px] text-blue-300 uppercase font-black mb-1 ml-1">Tanggal Rekap</label>
+                                <input type="date" id="rekapDate" class="p-3 rounded-xl text-sm input-field w-40">
+                            </div>
+                            <!-- INPUT JAM CLOSING -->
+                            <div class="flex flex-col">
+                                <label class="text-[8px] text-blue-300 uppercase font-black mb-1 ml-1">Jam Closing</label>
+                                <input type="time" id="closingTimeInput" class="p-3 rounded-xl text-sm input-field w-32" onchange="refreshRekapPreview()">
+                            </div>
+                            <button id="btnTarikRekap" onclick="fetchSheetData()"
+                                class="bg-blue-600 px-6 py-3 rounded-xl font-black text-[10px] uppercase hover:bg-blue-500 transition-all flex items-center gap-2 h-[46px]">
+                                <span id="spinnerTarik" class="hidden animate-spin">🌀</span> TARIK DATA
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="rekapContainer" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        <div class="lg:col-span-4 space-y-4">
+                            <div class="bg-white/5 p-5 rounded-2xl border border-white/10">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Summary Status</h3>
+                                    <span id="staffCount" class="text-xs font-black bg-blue-500 text-white px-2 py-1 rounded-md">0</span>
+                                </div>
+                                <div id="staffInList" class="flex flex-wrap gap-2 max-h-[250px] overflow-y-auto pr-2">
+                                    <p class="text-[11px] italic text-slate-600 w-full text-center py-4">Menunggu penarikan data...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PREVIEW REKAP -->
+                        <div class="lg:col-span-8 flex flex-col gap-4">
+                            <div id="rekapFinalPreview"
+                                class="report-preview p-6 rounded-2xl border border-white/5 text-[11px] text-blue-100 whitespace-pre min-h-[400px]">
+                                Preview Rekapitulasi Final...</div>
+                            <button id="btnSendDiscord" onclick="sendRekapToDiscord()"
+                                class="btn-discord w-full py-4 rounded-2xl font-black uppercase tracking-[0.1em] text-white text-[12px] flex items-center justify-center gap-2">
+                                <span>🚀</span> KIRIM REKAP KE DISCORD
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <footer class="mt-12 text-center text-white/20 text-[9px] uppercase tracking-[0.4em] font-black">
-            Kiramitsu Internal System • secure environment • v2.5
+            Kiramitsu Internal System • secure environment • v3.1
         </footer>
     </div>
 
     <script>
+        const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbwK92ph0HnoOLqHqYmJGTiluZ7NSbBPv45tTiFYiOAF5__WhsPOkwMsXPOcgcLDuXSm/exec";
         const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1486790421832007821/68g2tjs4FeDKiEJXyeh3W67sNs9zBNFpt8XBxV_E20Fe-HLqGZqtAmqbUULzPrFnyVzP";
 
         const STAFF_DATA = [
+            { nama: "Nuel Zaverio", jabatan: "HRD" },
             { nama: "Gison Kiramitsu", jabatan: "Ceo" },
             { nama: "Valish Kiramitsu", jabatan: "Manager" },
-            { nama: "Nuel Zaverio", jabatan: "HRD" },
-            { nama: "Tam Kiramitsu", jabatan: "HRD"},
-            { nama: "Bell Kiramitsu", jabatan: "HRD"},
-            { nama: "Arsan Kiramitsu", jabatan: "HRD"},
-            { nama: "Boru Octarine", jabatan: "Bartender"},
-            { nama: "Davis Lame", jabatan: "Bartender"},
-            { nama: "Fang Yin", jabatan: "Bartender"},
-            { nama: "Alex Kiramitsu", jabatan: "Waiters"},
-            { nama: "Devano Fortuna", jabatan: "Waiters"},
-            { nama: "Rider Alkhareem", jabatan: "Guard"},
-            { nama: "Farah Dominion", jabatan: "Dancer"}
+            { nama: "Tam Kiramitsu", jabatan: "HRD" },
+            { nama: "Bell Kiramitsu", jabatan: "HRD" },
+            { nama: "Arsan Kiramitsu", jabatan: "HRD" },
+            { nama: "Boru Octarine", jabatan: "Bartender" },
+            { nama: "Davis Lame", jabatan: "Bartender" },
+            { nama: "Fang Yin", jabatan: "Bartender" },
+            { nama: "Alex Kiramitsu", jabatan: "Waiters" },
+            { nama: "Devano Fortuna", jabatan: "Waiters" },
+            { nama: "Rider Alkhareem", jabatan: "Guard" },
+            { nama: "Farah Dominion", jabatan: "Dancer" }
         ];
 
         const PRICES = {
-            amer: 65000,
-            vodka: 85000,
-            azul: 105000,
-            fries: 60000,
-            chips: 70000,
-            rokok: 50000,
-            vipBasic: 1500000,
-            vipTema: 2500000
+            amer: 65000, vodka: 85000, azul: 105000,
+            fries: 60000, chips: 70000, rokok: 50000,
+            vipBasic: 1500000, vipTema: 2500000
         };
 
+        let currentTotals = null;
+        let currentStaffList = [];
+        let currentRekapData = null;
+
+        // --- UTILS ---
+        function showToast(msg) {
+            const t = document.getElementById("toast");
+            t.innerText = msg;
+            t.className = "show";
+            setTimeout(() => { t.className = ""; }, 3000);
+        }
+
         function formatIDR(num) {
-            return new Intl.NumberFormat('id-ID', { 
-                style: 'currency', 
-                currency: 'IDR', 
-                maximumFractionDigits: 0 
-            }).format(num);
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(num).replace('Rp', 'Rp ');
         }
 
-        function initStaff() {
-            const select = document.getElementById('kasirInput');
-            select.innerHTML = "";
-            STAFF_DATA.forEach(staff => {
-                const opt = document.createElement('option');
-                opt.value = staff.nama;
-                opt.textContent = staff.nama;
-                select.appendChild(opt);
+        function getJabatanByNama(nama) {
+            const staff = STAFF_DATA.find(s => s.nama === nama);
+            return staff ? staff.jabatan : "Staff";
+        }
+
+        function switchTab(tab) {
+            document.getElementById('staffSection').classList.toggle('hidden', tab !== 'staff');
+            document.getElementById('pjSection').classList.toggle('hidden', tab !== 'pj');
+            document.getElementById('tabStaff').classList.toggle('tab-active', tab === 'staff');
+            document.getElementById('tabPJ').classList.toggle('tab-active', tab === 'pj');
+        }
+
+        // --- INIT SELECTS ---
+        function initSelects() {
+            const staffSelect = document.getElementById('kasirInput');
+            const pjSelect = document.getElementById('pjNamaSelect');
+            
+            STAFF_DATA.forEach(s => {
+                const opt1 = document.createElement('option');
+                opt1.value = s.nama; opt1.textContent = s.nama;
+                staffSelect.appendChild(opt1);
+
+                const opt2 = document.createElement('option');
+                opt2.value = s.nama; opt2.textContent = s.nama;
+                pjSelect.appendChild(opt2);
             });
-            select.value = "Nuel Zaverio";
-            handleStaffChange();
         }
 
+        // --- STAFF LOGIC ---
         function handleStaffChange() {
-            const select = document.getElementById('kasirInput');
-            const jab = document.getElementById('jabatanInput');
-            const hName = document.getElementById('headerNameDisplay');
-            const hJob = document.getElementById('headerJobDisplay');
-            
-            const staff = STAFF_DATA.find(s => s.nama === select.value);
-            if (staff) {
-                jab.value = staff.jabatan;
-                hName.innerText = staff.nama;
-                hJob.innerText = staff.jabatan.toUpperCase() + " • DAILY REPORT SYSTEM";
-            }
-            generateReport();
+            generateStaffPreview();
         }
 
-        function generateReport() {
-            const kasirName = document.getElementById('kasirInput').value || '---';
-            const jabatan = document.getElementById('jabatanInput').value || '---';
-            const dateVal = document.getElementById('dateInput').value || '---';
-            const timeVal = document.getElementById('timeInput').value || '--:-- WIB';
-            
-            const qA = parseInt(document.getElementById('qAmer').value) || 0;
-            const qV = parseInt(document.getElementById('qVodka').value) || 0;
-            const qAz = parseInt(document.getElementById('qAzul').value) || 0;
-            const qR = parseInt(document.getElementById('qRokok').value) || 0;
-            const qF = parseInt(document.getElementById('qFries').value) || 0;
-            const qC = parseInt(document.getElementById('qChips').value) || 0;
-            const qVb = parseInt(document.getElementById('qVipBasic').value) || 0;
-            const qVt = parseInt(document.getElementById('qVipTema').value) || 0;
+        function generateStaffPreview() {
+            const name = document.getElementById('kasirInput').value;
+            const date = document.getElementById('dateInput').value;
+            const vals = {
+                a: parseInt(document.getElementById('qAmer').value) || 0,
+                v: parseInt(document.getElementById('qVodka').value) || 0,
+                az: parseInt(document.getElementById('qAzul').value) || 0,
+                f: parseInt(document.getElementById('qFries').value) || 0,
+                c: parseInt(document.getElementById('qChips').value) || 0,
+                r: parseInt(document.getElementById('qRokok').value) || 0,
+                vb: parseInt(document.getElementById('qVipBasic').value) || 0,
+                vt: parseInt(document.getElementById('qVipTema').value) || 0
+            };
 
-            const total = (qA * PRICES.amer) + (qV * PRICES.vodka) + (qAz * PRICES.azul) + 
-                          (qR * PRICES.rokok) + (qF * PRICES.fries) + (qC * PRICES.chips) + 
-                          (qVb * PRICES.vipBasic) + (qVt * PRICES.vipTema);
+            const total = (vals.a * PRICES.amer) + (vals.v * PRICES.vodka) + (vals.az * PRICES.azul) + (vals.f * PRICES.fries) + (vals.c * PRICES.chips) + (vals.r * PRICES.rokok) + (vals.vb * PRICES.vipBasic) + (vals.vt * PRICES.vipTema);
 
-            document.getElementById('grandTotalLabel').innerText = formatIDR(total);
-
-            const report = `┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-      𝑲𝑰𝑹𝑨𝑴𝑰𝑻𝑺𝑼 𝑫𝑨𝑰𝑳𝑹𝑬𝑷𝑶𝑹𝑻 (𝑪𝑳𝑶𝑺𝑰𝑵𝑮)
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-📅 Periode   : ${dateVal}
-⏰ Closing   : ${timeVal}
-👤 Kasir     : ${kasirName} (${jabatan})
-
-🍸 [ SIGNATURE PACKAGES ]
-• Paket Amer        : ${qA} PC  (${formatIDR(qA * PRICES.amer)})
-• Paket Vodka       : ${qV} PC  (${formatIDR(qV * PRICES.vodka)})
-• Paket Azul        : ${qAz} PC  (${formatIDR(qAz * PRICES.azul)})
-
-🍽️ [ DINING & EXTRA ]
-• Pkt French Fries  : ${qF} PC  (${formatIDR(qF * PRICES.fries)})
-• Pkt Fish & Chips  : ${qC} PC  (${formatIDR(qC * PRICES.chips)})
-• Rokok & Korek     : ${qR} PC  (${formatIDR(qR * PRICES.rokok)})
-
-🏨 [ ROOM BOOKING ]
-• VIP Room Basic    : ${qVb} Room (${formatIDR(qVb * PRICES.vipBasic)})
-• VIP Room Tema     : ${qVt} Room (${formatIDR(qVt * PRICES.vipTema)})
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-💰 TOTAL REVENUE    : ${formatIDR(total)}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
-
+            const report = `[ STAFF DAILY REPORT ]\n👤 Nama: ${name}\n📅 Tgl: ${date}\n\n📦 DETAIL:\n• Amer: ${vals.a}\n• Vodka: ${vals.v}\n• Azul: ${vals.az}\n• Fries: ${vals.f}\n• Chips: ${vals.c}\n• Rokok: ${vals.r}\n• VIP B: ${vals.vb}\n• VIP T: ${vals.vt}\n\n💰 TOTAL: ${formatIDR(total)}`;
             document.getElementById('reportText').innerText = report;
         }
 
-        async function sendToDiscord() {
-            const reportText = document.getElementById('reportText').innerText;
-            const btn = document.getElementById('btnSendDiscord');
-            
-            if (reportText.includes("Silakan lengkapi")) return;
+        async function sendToSheets() {
+            const btn = document.getElementById('btnSendSheets');
+            const data = {
+                action: "insert",
+                tanggal: document.getElementById('dateInput').value,
+                kasir: document.getElementById('kasirInput').value,
+                jabatan: getJabatanByNama(document.getElementById('kasirInput').value),
+                p_amer: document.getElementById('qAmer').value,
+                p_vodka: document.getElementById('qVodka').value,
+                p_azul: document.getElementById('qAzul').value,
+                f_fries: document.getElementById('qFries').value,
+                f_chips: document.getElementById('qChips').value,
+                rokok: document.getElementById('qRokok').value,
+                v_basic: document.getElementById('qVipBasic').value,
+                v_tema: document.getElementById('qVipTema').value
+            };
 
             try {
                 btn.disabled = true;
-                btn.innerHTML = `<span>⏳</span> MENGIRIM...`;
+                btn.innerText = "⏳ SEDANG MENGIRIM...";
+                await fetch(GOOGLE_SHEET_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                showToast("Berhasil simpan ke Sheets!");
+                btn.innerText = "✅ BERHASIL DIKIRIM";
+                setTimeout(() => { btn.disabled = false; btn.innerHTML = "<span>📊</span> KIRIM KE SPREADSHEET"; }, 3000);
+            } catch (e) {
+                showToast("Gagal menyimpan!");
+                btn.disabled = false;
+            }
+        }
 
+        // --- PJ REKAP LOGIC ---
+        async function fetchSheetData() {
+            const targetDate = document.getElementById('rekapDate').value;
+            const btn = document.getElementById('btnTarikRekap');
+
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '🌀 Loading...';
+
+                const proxy = 'https://api.codetabs.com/v1/proxy?quest=';
+                const url = encodeURIComponent(`${GOOGLE_SHEET_URL}?action=read&date=${targetDate}`);
+
+                const response = await fetch(proxy + url);
+                const rawText = await response.text();
+
+                let result;
+                if (rawText.trim() === '[]' || rawText.trim() === '') {
+                    result = { status: "success", data: [] };
+                } else {
+                    result = JSON.parse(rawText);
+                }
+
+                if (result.status === "success" && result.data?.length > 0) {
+                    currentStaffList = [];
+                    currentTotals = { a: 0, v: 0, az: 0, f: 0, c: 0, r: 0, vb: 0, vt: 0 };
+                    
+                    result.data.forEach(row => {
+                        currentStaffList.push(row.kasir);
+                        currentTotals.a += parseInt(row.p_amer || 0);
+                        currentTotals.v += parseInt(row.p_vodka || 0);
+                        currentTotals.az += parseInt(row.p_azul || 0);
+                        currentTotals.f += parseInt(row.f_fries || 0);
+                        currentTotals.c += parseInt(row.f_chips || 0);
+                        currentTotals.r += parseInt(row.rokok || 0);
+                        currentTotals.vb += parseInt(row.v_basic || 0);
+                        currentTotals.vt += parseInt(row.v_tema || 0);
+                    });
+
+                    refreshRekapPreview();
+                    showToast(`✅ ${result.data.length} data dimuat!`);
+                } else {
+                    resetRekapUI();
+                    showToast(`📭 Tidak ada data untuk ${targetDate}`);
+                }
+            } catch (e) {
+                showToast("❌ Error Fetching Data");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span>🌀</span> TARIK DATA';
+            }
+        }
+
+        function resetRekapUI() {
+            document.getElementById('staffInList').innerHTML = '<p class="text-[11px] italic text-slate-600 w-full text-center py-4">Data tidak ditemukan.</p>';
+            document.getElementById('staffCount').innerText = '0';
+            document.getElementById('rekapFinalPreview').innerText = "Belum ada data untuk tanggal ini.";
+            currentTotals = null;
+        }
+
+        function refreshRekapPreview() {
+            if (!currentTotals) return;
+
+            const pjNama = document.getElementById('pjNamaSelect').value;
+            const pjJabatan = getJabatanByNama(pjNama);
+            const date = document.getElementById('rekapDate').value;
+            const closingTime = document.getElementById('closingTimeInput').value || "--:--";
+            
+            // Render staff tags
+            const listContainer = document.getElementById('staffInList');
+            document.getElementById('staffCount').innerText = currentStaffList.length;
+            listContainer.innerHTML = currentStaffList.map(name => `
+                <div class="flex items-center gap-2 bg-blue-500/10 px-3 py-1.5 rounded-lg border border-blue-500/20">
+                    <div class="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
+                    <span class="text-[10px] font-black uppercase text-blue-200">${name}</span>
+                </div>
+            `).join('');
+
+            const grandTotal = (currentTotals.a * PRICES.amer) + (currentTotals.v * PRICES.vodka) + (currentTotals.az * PRICES.azul) + (currentTotals.f * PRICES.fries) + (currentTotals.c * PRICES.chips) + (currentTotals.r * PRICES.rokok) + (currentTotals.vb * PRICES.vipBasic) + (currentTotals.vt * PRICES.vipTema);
+
+            const rekapText = `┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+      𝑲𝑰𝑹𝑨𝑴𝑰𝑻𝑺𝑼 𝑫𝑨𝑰𝑳𝑹𝑬𝑷𝑶𝑹𝑻 (𝑪𝑳𝑶𝑺𝑰𝑵𝑮)
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+📅 Periode   : ${date}
+⏰ Closing   : ${closingTime} WIB
+👤 Kasir     : ${pjNama} (${pjJabatan})
+
+🍸 [ SIGNATURE PACKAGES ]
+• Paket Amer        : ${currentTotals.a} PC  (${formatIDR(currentTotals.a * PRICES.amer)})
+• Paket Vodka       : ${currentTotals.v} PC  (${formatIDR(currentTotals.v * PRICES.vodka)})
+• Paket Azul        : ${currentTotals.az} PC  (${formatIDR(currentTotals.az * PRICES.azul)})
+
+🍽️ [ DINING & EXTRA ]
+• Pkt French Fries  : ${currentTotals.f} PC  (${formatIDR(currentTotals.f * PRICES.fries)})
+• Pkt Fish & Chips  : ${currentTotals.c} PC  (${formatIDR(currentTotals.c * PRICES.chips)})
+• Rokok & Korek     : ${currentTotals.r} PC  (${formatIDR(currentTotals.r * PRICES.rokok)})
+
+🏨 [ ROOM BOOKING ]
+• VIP Room Basic    : ${currentTotals.vb} Room (${formatIDR(currentTotals.vb * PRICES.vipBasic)})
+• VIP Room Tema     : ${currentTotals.vt} Room (${formatIDR(currentTotals.vt * PRICES.vipTema)})
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+💰 TOTAL REVENUE    : ${formatIDR(grandTotal)}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+
+            document.getElementById('rekapFinalPreview').innerText = rekapText;
+            currentRekapData = rekapText;
+        }
+
+        async function sendRekapToDiscord() {
+            if (!currentRekapData) return showToast("Belum ada data rekap!");
+            const btn = document.getElementById('btnSendDiscord');
+
+            try {
+                btn.disabled = true;
+                btn.innerText = "🚀 MENGIRIM KE DISCORD...";
                 const response = await fetch(DISCORD_WEBHOOK_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ content: "```" + reportText.replace(/```/g, "") + "```" })
+                    body: JSON.stringify({ content: "```" + currentRekapData + "```" })
                 });
 
                 if (response.ok) {
-                    btn.innerHTML = `<span>✅</span> BERHASIL!`;
-                    btn.style.background = "#16a34a";
-                    setTimeout(() => {
-                        btn.innerHTML = `<span>🚀</span> SEND TO DISCORD`;
-                        btn.style.background = "";
-                        btn.disabled = false;
-                    }, 3000);
-                } else {
-                    throw new Error("Gagal kirim");
+                    showToast("Rekapitulasi Berhasil Dikirim!");
+                    btn.innerText = "✅ TERKIRIM";
+                    setTimeout(() => { btn.disabled = false; btn.innerHTML = "<span>🚀</span> KIRIM REKAP KE DISCORD"; }, 3000);
                 }
-            } catch (error) {
-                alert("Kesalahan: Webhook Discord bermasalah.");
+            } catch (e) {
+                showToast("Gagal kirim ke Discord!");
                 btn.disabled = false;
-                btn.innerHTML = `<span>🚀</span> SEND TO DISCORD`;
             }
         }
-
-        function copyToClipboard() {
-            const text = document.getElementById('reportText').innerText;
-            const el = document.createElement('textarea');
-            el.value = text;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-            alert("Teks Laporan Berhasil Disalin!");
-        }
-
-        function resetForm() {
-            if(confirm("Hapus semua data input?")) {
-                document.querySelectorAll('.sales-qty').forEach(el => el.value = 0);
-                document.getElementById('timeInput').value = "";
-                generateReport();
-            }
-        }
-
-        document.querySelectorAll('input, select').forEach(el => {
-            el.addEventListener('input', generateReport);
-        });
 
         window.onload = () => {
-            const now = new Date();
-            document.getElementById('dateInput').valueAsDate = now;
-            initStaff();
+            const d = new Date();
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const hours = String(d.getHours()).padStart(2, '0');
+            const minutes = String(d.getMinutes()).padStart(2, '0');
+            const today = `${year}-${month}-${day}`;
+            const nowTime = `${hours}:${minutes}`;
+
+            document.getElementById('dateInput').value = today;
+            document.getElementById('rekapDate').value = today;
+            document.getElementById('closingTimeInput').value = nowTime; // Set default jam sekarang
+            
+            initSelects();
+            generateStaffPreview();
+
+            document.querySelectorAll('#staffSection input, #staffSection select').forEach(el => {
+                el.addEventListener('input', generateStaffPreview);
+            });
         };
     </script>
 </body>
+
 </html>
