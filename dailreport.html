@@ -77,18 +77,41 @@
         }
 
         @keyframes fadein {
-            from { bottom: 0; opacity: 0; }
-            to { bottom: 30px; opacity: 1; }
+            from {
+                bottom: 0;
+                opacity: 0;
+            }
+
+            to {
+                bottom: 30px;
+                opacity: 1;
+            }
         }
 
         @keyframes fadeout {
-            from { bottom: 30px; opacity: 1; }
-            to { bottom: 0; opacity: 0; }
+            from {
+                bottom: 30px;
+                opacity: 1;
+            }
+
+            to {
+                bottom: 0;
+                opacity: 0;
+            }
         }
 
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
-        ::-webkit-scrollbar-thumb { background: #f472b6; border-radius: 10px; }
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #f472b6;
+            border-radius: 10px;
+        }
     </style>
 </head>
 
@@ -96,19 +119,17 @@
     <div id="toast">Notifikasi</div>
 
     <div class="max-w-6xl mx-auto">
-        <!-- HEADER -->
         <header class="mb-10 flex flex-col md:flex-row justify-between items-center gap-6">
             <div class="flex items-center gap-4">
-                <img src="kiramitsu.png"
-                    class="w-16 h-16 rounded-full border-2 border-pink-500/30 p-1">
+                <img src="kiramitsu.png" class="w-16 h-16 rounded-full border-2 border-pink-500/30 p-1">
                 <div>
                     <h1 class="text-3xl font-black text-white italic tracking-tighter">KIRA<span
                             class="text-pink-500">MITSU</span></h1>
-                    <p class="text-pink-200/50 text-[10px] uppercase font-bold tracking-[0.3em]">Internal Management System</p>
+                    <p class="text-pink-200/50 text-[10px] uppercase font-bold tracking-[0.3em]">Internal Management
+                        System</p>
                 </div>
             </div>
 
-            <!-- TAB SWITCHER -->
             <div class="flex bg-white/5 p-1 rounded-2xl border border-white/10">
                 <button onclick="switchTab('staff')" id="tabStaff"
                     class="px-6 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all tab-active">Staff
@@ -116,21 +137,21 @@
                 <button onclick="switchTab('pj')" id="tabPJ"
                     class="px-6 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all">Rekapitulasi
                     (PJ)</button>
-                    
+
             </div>
             <div class="flex items-center gap-6">
-                <a href="index.html" class="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-pink-400 transition-all flex items-center gap-2">
+                <a href="index.html"
+                    class="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-pink-400 transition-all flex items-center gap-2">
                     <span class="text-lg">←</span> Back to Dashboard
                 </a>
-               
             </div>
         </header>
 
-        <!-- STAFF INPUT SECTION -->
         <div id="staffSection" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             <div class="lg:col-span-7 space-y-6">
                 <div class="glass-card p-6 rounded-3xl shadow-xl">
-                    <h2 class="text-sm font-black mb-6 text-pink-400 uppercase tracking-[0.2em]">✍️ Staff Daily Input</h2>
+                    <h2 class="text-sm font-black mb-6 text-pink-400 uppercase tracking-[0.2em]">✍️ Staff Daily Input
+                    </h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                         <div class="space-y-1">
                             <label class="text-[9px] text-pink-200/40 uppercase font-black ml-1">Nama Staff</label>
@@ -196,7 +217,6 @@
                 </div>
             </div>
 
-            <!-- PREVIEW STAFF -->
             <div class="lg:col-span-5 flex flex-col gap-6">
                 <div class="glass-card p-6 rounded-3xl flex-grow flex flex-col border-t-4 border-t-pink-500">
                     <h2 class="text-xs font-black text-pink-200 uppercase tracking-widest mb-4">📄 PERSONAL PREVIEW</h2>
@@ -207,28 +227,33 @@
             </div>
         </div>
 
-        <!-- PJ REKAP SECTION -->
         <div id="pjSection" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-8">
             <div class="lg:col-span-12 space-y-6">
                 <div class="glass-card p-8 rounded-3xl shadow-xl border-t-4 border-t-blue-500">
                     <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
                         <div>
-                            <h2 class="text-xl font-black text-blue-400 uppercase tracking-tighter">Rekapitulasi Akhir</h2>
-                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Akumulasi Seluruh Penjualan Staff</p>
+                            <h2 class="text-xl font-black text-blue-400 uppercase tracking-tighter">Rekapitulasi Akhir
+                            </h2>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Akumulasi Seluruh
+                                Penjualan Staff</p>
                         </div>
                         <div class="flex gap-2 flex-wrap justify-center items-end">
                             <div class="flex flex-col">
-                                <label class="text-[8px] text-blue-300 uppercase font-black mb-1 ml-1">Pilih PJ/Kasir</label>
-                                <select id="pjNamaSelect" class="p-3 rounded-xl text-sm input-field w-44 outline-none" onchange="refreshRekapPreview()"></select>
+                                <label class="text-[8px] text-blue-300 uppercase font-black mb-1 ml-1">Pilih
+                                    PJ/Kasir</label>
+                                <select id="pjNamaSelect" class="p-3 rounded-xl text-sm input-field w-44 outline-none"
+                                    onchange="refreshRekapPreview()"></select>
                             </div>
                             <div class="flex flex-col">
-                                <label class="text-[8px] text-blue-300 uppercase font-black mb-1 ml-1">Tanggal Rekap</label>
+                                <label class="text-[8px] text-blue-300 uppercase font-black mb-1 ml-1">Tanggal
+                                    Rekap</label>
                                 <input type="date" id="rekapDate" class="p-3 rounded-xl text-sm input-field w-40">
                             </div>
-                            <!-- INPUT JAM CLOSING -->
                             <div class="flex flex-col">
-                                <label class="text-[8px] text-blue-300 uppercase font-black mb-1 ml-1">Jam Closing</label>
-                                <input type="time" id="closingTimeInput" class="p-3 rounded-xl text-sm input-field w-32" onchange="refreshRekapPreview()">
+                                <label class="text-[8px] text-blue-300 uppercase font-black mb-1 ml-1">Jam
+                                    Closing</label>
+                                <input type="time" id="closingTimeInput" class="p-3 rounded-xl text-sm input-field w-32"
+                                    onchange="refreshRekapPreview()">
                             </div>
                             <button id="btnTarikRekap" onclick="fetchSheetData()"
                                 class="bg-blue-600 px-6 py-3 rounded-xl font-black text-[10px] uppercase hover:bg-blue-500 transition-all flex items-center gap-2 h-[46px]">
@@ -241,16 +266,18 @@
                         <div class="lg:col-span-4 space-y-4">
                             <div class="bg-white/5 p-5 rounded-2xl border border-white/10">
                                 <div class="flex justify-between items-center mb-4">
-                                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Summary Status</h3>
-                                    <span id="staffCount" class="text-xs font-black bg-blue-500 text-white px-2 py-1 rounded-md">0</span>
+                                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Summary
+                                        Status</h3>
+                                    <span id="staffCount"
+                                        class="text-xs font-black bg-blue-500 text-white px-2 py-1 rounded-md">0</span>
                                 </div>
                                 <div id="staffInList" class="flex flex-wrap gap-2 max-h-[250px] overflow-y-auto pr-2">
-                                    <p class="text-[11px] italic text-slate-600 w-full text-center py-4">Menunggu penarikan data...</p>
+                                    <p class="text-[11px] italic text-slate-600 w-full text-center py-4">Menunggu
+                                        penarikan data...</p>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- PREVIEW REKAP -->
                         <div class="lg:col-span-8 flex flex-col gap-4">
                             <div id="rekapFinalPreview"
                                 class="report-preview p-6 rounded-2xl border border-white/5 text-[11px] text-blue-100 whitespace-pre min-h-[400px]">
@@ -271,24 +298,11 @@
     </div>
 
     <script>
-        const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbwK92ph0HnoOLqHqYmJGTiluZ7NSbBPv45tTiFYiOAF5__WhsPOkwMsXPOcgcLDuXSm/exec";
+        const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxQ9jQngiKPg56EZLS-st5yVRGX5P-6kUdMm97uQpHqj_gCeY4aATmyWiaAbTGeolzzbA/exec";
         const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1486790421832007821/68g2tjs4FeDKiEJXyeh3W67sNs9zBNFpt8XBxV_E20Fe-HLqGZqtAmqbUULzPrFnyVzP";
 
-        const STAFF_DATA = [
-            { nama: "Nuel Zaverio", jabatan: "HRD" },
-            { nama: "Gison Kiramitsu", jabatan: "Ceo" },
-            { nama: "Valish Kiramitsu", jabatan: "Manager" },
-            { nama: "Tam Kiramitsu", jabatan: "HRD" },
-            { nama: "Bell Kiramitsu", jabatan: "HRD" },
-            { nama: "Arsan Kiramitsu", jabatan: "HRD" },
-            { nama: "Boru Octarine", jabatan: "Bartender" },
-            { nama: "Davis Lame", jabatan: "Bartender" },
-            { nama: "Fang Yin", jabatan: "Bartender" },
-            { nama: "Alex Kiramitsu", jabatan: "Waiters" },
-            { nama: "Devano Fortuna", jabatan: "Waiters" },
-            { nama: "Rider Alkhareem", jabatan: "Guard" },
-            { nama: "Farah Dominion", jabatan: "Dancer" }
-        ];
+        // DATA STAFF SEKARANG DIAMBIL DINAMIS DARI GOOGLE SHEET
+        let STAFF_DATA = [];
 
         const PRICES = {
             amer: 65000, vodka: 85000, azul: 105000,
@@ -324,11 +338,37 @@
             document.getElementById('tabPJ').classList.toggle('tab-active', tab === 'pj');
         }
 
+        // --- AMBIL DATA STAFF DARI SHEET ---
+        async function loadStaffList() {
+            try {
+                // Tambahkan timestamp agar tidak terkena cache browser
+                const response = await fetch(`${GOOGLE_SHEET_URL}?action=getStaff&t=${new Date().getTime()}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                STAFF_DATA = await response.json();
+
+                if (STAFF_DATA && STAFF_DATA.length > 0) {
+                    initSelects();
+                } else {
+                    showToast("Data staff kosong di Spreadsheet!");
+                }
+            } catch (e) {
+                console.error("Gagal load staff:", e);
+                showToast("Gagal mengambil data staff! Periksa koneksi/URL.");
+                // Fallback manual jika gagal (opsional)
+                STAFF_DATA = [{ nama: "Gagal Ambil Data", jabatan: "Error" }];
+                initSelects();
+            }
+        }
+
         // --- INIT SELECTS ---
         function initSelects() {
             const staffSelect = document.getElementById('kasirInput');
             const pjSelect = document.getElementById('pjNamaSelect');
-            
+
+            staffSelect.innerHTML = '<option value="" disabled selected>Pilih Nama</option>';
+            pjSelect.innerHTML = '<option value="" disabled selected>Pilih Nama</option>';
+
             STAFF_DATA.forEach(s => {
                 const opt1 = document.createElement('option');
                 opt1.value = s.nama; opt1.textContent = s.nama;
@@ -361,14 +401,14 @@
 
             const total = (vals.a * PRICES.amer) + (vals.v * PRICES.vodka) + (vals.az * PRICES.azul) + (vals.f * PRICES.fries) + (vals.c * PRICES.chips) + (vals.r * PRICES.rokok) + (vals.vb * PRICES.vipBasic) + (vals.vt * PRICES.vipTema);
 
-            const report = `[ STAFF DAILY REPORT ]\n👤 Nama: ${name}\n📅 Tgl: ${date}\n\n📦 DETAIL:\n• Amer: ${vals.a}\n• Vodka: ${vals.v}\n• Azul: ${vals.az}\n• Fries: ${vals.f}\n• Chips: ${vals.c}\n• Rokok: ${vals.r}\n• VIP B: ${vals.vb}\n• VIP T: ${vals.vt}\n\n💰 TOTAL: ${formatIDR(total)}`;
+            const report = `[ STAFF DAIL REPORT ]\n👤 Nama: ${name}\n📅 Tgl: ${date}\n\n📦 DETAIL:\n• Amer: ${vals.a}\n• Vodka: ${vals.v}\n• Azul: ${vals.az}\n• Fries: ${vals.f}\n• Chips: ${vals.c}\n• Rokok: ${vals.r}\n• VIP B: ${vals.vb}\n• VIP T: ${vals.vt}\n\n💰 TOTAL: ${formatIDR(total)}`;
             document.getElementById('reportText').innerText = report;
         }
 
         async function sendToSheets() {
             const btn = document.getElementById('btnSendSheets');
             const data = {
-                action: "insert",
+                type: "dailreport",
                 tanggal: document.getElementById('dateInput').value,
                 kasir: document.getElementById('kasirInput').value,
                 jabatan: getJabatanByNama(document.getElementById('kasirInput').value),
@@ -378,25 +418,40 @@
                 f_fries: document.getElementById('qFries').value,
                 f_chips: document.getElementById('qChips').value,
                 rokok: document.getElementById('qRokok').value,
-                v_basic: document.getElementById('qVipBasic').value,
-                v_tema: document.getElementById('qVipTema').value
+
+                // Pastikan ID ini SAMA dengan yang ada di tag <input id="...">
+                v_basic: document.getElementById('qVipBasic').value, // Sebelumnya mungkin salah ID
+                v_tema: document.getElementById('qVipTema').value   // Sebelumnya mungkin salah ID
             };
 
             try {
                 btn.disabled = true;
                 btn.innerText = "⏳ SEDANG MENGIRIM...";
-                await fetch(GOOGLE_SHEET_URL, {
+
+                const response = await fetch(GOOGLE_SHEET_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
-                showToast("Berhasil simpan ke Sheets!");
-                btn.innerText = "✅ BERHASIL DIKIRIM";
-                setTimeout(() => { btn.disabled = false; btn.innerHTML = "<span>📊</span> KIRIM KE SPREADSHEET"; }, 3000);
+
+                const result = await response.json();
+
+                if (result.status === "success") {
+                    showToast("Berhasil simpan ke Sheets!");
+                    btn.innerText = "✅ BERHASIL DIKIRIM";
+                    document.querySelectorAll('#staffSection input[type="number"]').forEach(input => input.value = 0);
+                    generateStaffPreview();
+                } else {
+                    throw new Error(result.message);
+                }
+
             } catch (e) {
                 showToast("Gagal menyimpan!");
-                btn.disabled = false;
+                btn.innerText = "❌ GAGAL (COBA LAGI)";
+            } finally {
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = "<span>📊</span> KIRIM KE SPREADSHEET";
+                }, 3000);
             }
         }
 
@@ -405,47 +460,27 @@
             const targetDate = document.getElementById('rekapDate').value;
             const btn = document.getElementById('btnTarikRekap');
 
+            if (!targetDate) return showToast("Pilih tanggal dulu!");
+
             try {
                 btn.disabled = true;
                 btn.innerHTML = '🌀 Loading...';
 
-                const proxy = 'https://api.codetabs.com/v1/proxy?quest=';
-                const url = encodeURIComponent(`${GOOGLE_SHEET_URL}?action=read&date=${targetDate}`);
+                const response = await fetch(`${GOOGLE_SHEET_URL}?action=read&date=${targetDate}`);
+                const result = await response.json();
 
-                const response = await fetch(proxy + url);
-                const rawText = await response.text();
-
-                let result;
-                if (rawText.trim() === '[]' || rawText.trim() === '') {
-                    result = { status: "success", data: [] };
-                } else {
-                    result = JSON.parse(rawText);
-                }
-
-                if (result.status === "success" && result.data?.length > 0) {
-                    currentStaffList = [];
-                    currentTotals = { a: 0, v: 0, az: 0, f: 0, c: 0, r: 0, vb: 0, vt: 0 };
-                    
-                    result.data.forEach(row => {
-                        currentStaffList.push(row.kasir);
-                        currentTotals.a += parseInt(row.p_amer || 0);
-                        currentTotals.v += parseInt(row.p_vodka || 0);
-                        currentTotals.az += parseInt(row.p_azul || 0);
-                        currentTotals.f += parseInt(row.f_fries || 0);
-                        currentTotals.c += parseInt(row.f_chips || 0);
-                        currentTotals.r += parseInt(row.rokok || 0);
-                        currentTotals.vb += parseInt(row.v_basic || 0);
-                        currentTotals.vt += parseInt(row.v_tema || 0);
-                    });
-
+                if (result.status === "success") {
+                    currentTotals = result.totals;
+                    currentStaffList = result.staffList;
                     refreshRekapPreview();
-                    showToast(`✅ ${result.data.length} data dimuat!`);
+                    showToast(`✅ Data dimuat!`);
                 } else {
                     resetRekapUI();
-                    showToast(`📭 Tidak ada data untuk ${targetDate}`);
+                    showToast(`📭 Tidak ada data`);
                 }
             } catch (e) {
-                showToast("❌ Error Fetching Data");
+                console.error(e);
+                showToast("❌ Gagal: Masalah Koneksi/CORS");
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<span>🌀</span> TARIK DATA';
@@ -462,12 +497,11 @@
         function refreshRekapPreview() {
             if (!currentTotals) return;
 
-            const pjNama = document.getElementById('pjNamaSelect').value;
+            const pjNama = document.getElementById('pjNamaSelect').value || "Belum Dipilih";
             const pjJabatan = getJabatanByNama(pjNama);
             const date = document.getElementById('rekapDate').value;
             const closingTime = document.getElementById('closingTimeInput').value || "--:--";
-            
-            // Render staff tags
+
             const listContainer = document.getElementById('staffInList');
             document.getElementById('staffCount').innerText = currentStaffList.length;
             listContainer.innerHTML = currentStaffList.map(name => `
@@ -534,19 +568,15 @@
 
         window.onload = () => {
             const d = new Date();
-            const year = d.getFullYear();
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const day = String(d.getDate()).padStart(2, '0');
-            const hours = String(d.getHours()).padStart(2, '0');
-            const minutes = String(d.getMinutes()).padStart(2, '0');
-            const today = `${year}-${month}-${day}`;
-            const nowTime = `${hours}:${minutes}`;
+            const today = d.toISOString().split('T')[0];
+            const nowTime = d.getHours().toString().padStart(2, '0') + ":" + d.getMinutes().toString().padStart(2, '0');
 
             document.getElementById('dateInput').value = today;
             document.getElementById('rekapDate').value = today;
-            document.getElementById('closingTimeInput').value = nowTime; // Set default jam sekarang
-            
-            initSelects();
+            document.getElementById('closingTimeInput').value = nowTime;
+
+            // PANGGIL LOAD STAFF SAAT HALAMAN DIBUKA
+            loadStaffList();
             generateStaffPreview();
 
             document.querySelectorAll('#staffSection input, #staffSection select').forEach(el => {

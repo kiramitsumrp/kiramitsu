@@ -1,82 +1,26 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Absensi Staff - Kiramitsu</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body {
-            background: radial-gradient(circle at top right, #2d1b2e, #0f172a);
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            color: white;
-            min-height: 100vh;
-        }
-
-        .glass {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(244, 114, 182, 0.1);
-        }
-
-        .input-field {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(244, 114, 182, 0.2);
-            color: white;
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 0.75rem;
-            outline: none;
-        }
-
-        .input-field:focus {
-            border-color: #f472b6;
-        }
-
-        #toast {
-            visibility: hidden;
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #f472b6;
-            padding: 12px 20px;
-            border-radius: 10px;
-            font-weight: bold;
-            z-index: 1000;
-        }
-
-        #toast.show {
-            visibility: visible;
-            animation: fadeInUp 0.3s;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translate(-50%, 20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translate(-50%, 0);
-            }
-        }
+        body { background: radial-gradient(circle at top right, #2d1b2e, #0f172a); font-family: 'Plus Jakarta Sans', sans-serif; color: white; min-height: 100vh; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(244, 114, 182, 0.1); }
+        .input-field { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(244, 114, 182, 0.2); color: white; width: 100%; padding: 0.75rem; border-radius: 0.75rem; outline: none; }
+        .input-field:focus { border-color: #f472b6; }
+        #toast { visibility: hidden; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #f472b6; padding: 12px 20px; border-radius: 10px; font-weight: bold; z-index: 1000; transition: 0.3s; }
+        #toast.show { visibility: visible; opacity: 1; }
     </style>
 </head>
-
 <body class="p-6">
     <div id="toast">Notif</div>
-
     <div class="max-w-xl mx-auto">
-        <div class="max-w-xl mx-auto mb-6">
-            <a href="index.html"
-                class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-pink-400/60 hover:text-pink-400 transition-all group">
-                <span class="text-lg group-hover:-translate-x-1 transition-transform">←</span>
-                Back to Dashboard
+        <div class="mb-6">
+            <a href="index.html" class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-pink-400/60 hover:text-pink-400 transition-all">
+                <span>←</span> Back to Dashboard
             </a>
         </div>
         <div class="text-center mb-8">
@@ -86,51 +30,50 @@
 
         <div class="glass p-8 rounded-[2rem] shadow-2xl">
             <div class="mb-5">
-                <label class="text-[10px] font-bold uppercase tracking-wider text-pink-400 mb-2 block">Pilih Nama
-                    Staff</label>
-                <select id="nama" class="input-field"></select>
+                <label class="text-[10px] font-bold uppercase tracking-wider text-pink-400 mb-2 block">Pilih Nama Staff</label>
+                <select id="nama" class="input-field">
+                    <option value="">⏳ Memuat data staff...</option>
+                </select>
             </div>
-
             <div class="mb-5">
-                <label class="text-[10px] font-bold uppercase tracking-wider text-pink-400 mb-2 block">Tanggal
-                    Kerja</label>
+                <label class="text-[10px] font-bold uppercase tracking-wider text-pink-400 mb-2 block">Tanggal Kerja</label>
                 <input type="date" id="tanggal" class="input-field">
             </div>
-
             <div class="grid grid-cols-2 gap-4 mb-8">
                 <div>
-                    <label class="text-[10px] font-bold uppercase tracking-wider text-pink-400 mb-2 block">Jam
-                        Masuk</label>
+                    <label class="text-[10px] font-bold uppercase tracking-wider text-pink-400 mb-2 block">Jam Masuk</label>
                     <input type="time" id="masuk" class="input-field">
                 </div>
                 <div>
-                    <label class="text-[10px] font-bold uppercase tracking-wider text-pink-400 mb-2 block">Jam
-                        Keluar</label>
+                    <label class="text-[10px] font-bold uppercase tracking-wider text-pink-400 mb-2 block">Jam Keluar</label>
                     <input type="time" id="keluar" class="input-field">
                 </div>
             </div>
-
-            <button onclick="kirimAbsen()" id="btnKirim"
-                class="w-full bg-gradient-to-r from-pink-600 to-pink-500 py-4 rounded-xl font-black text-sm tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-pink-500/20">
+            <button onclick="kirimAbsen()" id="btnKirim" class="w-full bg-gradient-to-r from-pink-600 to-pink-500 py-4 rounded-xl font-black text-sm tracking-widest hover:scale-[1.02] active:scale-95 transition-all">
                 KIRIM DATA ABSENSI
             </button>
         </div>
     </div>
 
     <script>
-        // MASUKKIN URL BARU LU DI SINI SETELAH NEW DEPLOYMENT!
-        const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxLezGx1Fxsg2b-ZSX3nvrP8DTBXpsp8UvYYB4PaeWLxvIZVxcBLk5WxZ1BCrfbLgpJ/exec";
+        const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxQ9jQngiKPg56EZLS-st5yVRGX5P-6kUdMm97uQpHqj_gCeY4aATmyWiaAbTGeolzzbA/exec";
 
-        const DAFTAR_STAFF = ["Nuel Zaverio", "Gison Kiramitsu", "Valish Kiramitsu", "Tam Kiramitsu", "Bell Kiramitsu", "Arsan Kiramitsu", "Boru Octarine", "Davis Lame", "Fang Yin", "Alex Kiramitsu", "Devano Fortuna", "Rider Alkhareem", "Farah Dominion"];
-
-        window.onload = () => {
-            const select = document.getElementById("nama");
-            DAFTAR_STAFF.sort().forEach(nama => {
-                const opt = document.createElement("option");
-                opt.value = nama; opt.textContent = nama;
-                select.appendChild(opt);
-            });
+        window.onload = async () => {
             document.getElementById("tanggal").value = new Date().toISOString().split("T")[0];
+            const select = document.getElementById("nama");
+            try {
+                const response = await fetch(URL_SCRIPT + "?action=getStaff");
+                const staffList = await response.json();
+                select.innerHTML = '<option value="" disabled selected>-- Pilih Nama --</option>';
+                staffList.sort((a, b) => a.nama.localeCompare(b.nama)).forEach(s => {
+                    const opt = document.createElement("option");
+                    opt.value = s.nama; opt.textContent = s.nama;
+                    select.appendChild(opt);
+                });
+            } catch (err) {
+                select.innerHTML = '<option value="">❌ Gagal memuat data</option>';
+                showToast("Gagal mengambil data staff!");
+            }
         };
 
         function showToast(msg) {
@@ -149,37 +92,19 @@
                 jam_keluar: document.getElementById("keluar").value
             };
 
-            // Validasi Dasar
-            if (!payload.jam_masuk || !payload.jam_keluar) {
-                return showToast("❌ Jam masuk & keluar wajib diisi!");
-            }
+            if (!payload.nama || !payload.jam_masuk || !payload.jam_keluar) return showToast("❌ Data belum lengkap!");
 
-            // Kunci tombol biar gak double send ke baris 1001
-            btn.disabled = true;
-            btn.innerText = "⏳ SEDANG MENGIRIM...";
-            btn.style.opacity = "0.5";
-
+            btn.disabled = true; btn.innerText = "⏳ MENGIRIM...";
             try {
-                await fetch(URL_SCRIPT, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: { "Content-Type": "text/plain" },
-                    body: JSON.stringify(payload)
-                });
-
-                showToast("✅ ABSENSI BERHASIL DICATAT!");
-                // Reset form
-                document.getElementById("masuk").value = "";
-                document.getElementById("keluar").value = "";
+                await fetch(URL_SCRIPT, { method: "POST", body: JSON.stringify(payload) });
+                showToast("✅ ABSENSI BERHASIL!");
+                document.getElementById("masuk").value = ""; document.getElementById("keluar").value = "";
             } catch (err) {
                 showToast("❌ ERROR: " + err.message);
             } finally {
-                btn.disabled = false;
-                btn.innerText = "KIRIM DATA ABSENSI";
-                btn.style.opacity = "1";
+                btn.disabled = false; btn.innerText = "KIRIM DATA ABSENSI";
             }
         }
     </script>
 </body>
-
 </html>
